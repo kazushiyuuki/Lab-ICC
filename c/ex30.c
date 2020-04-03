@@ -1,4 +1,4 @@
-//Esse algoritmo lê N inteiros  e omprime os dois maiores dos lidos em ordem decrescente
+//Esse algoritmo lê N inteiros  e imprime os dois maiores dos lidos em ordem decrescente
 #include<stdio.h>
 #include<stdlib.h>
 int main(){
