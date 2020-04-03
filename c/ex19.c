@@ -1,13 +1,15 @@
-//Radar
-//Limite de velocidade L
-//Aplicado uma multa fixa mais uma taxa por km/h acima do limite
+//De acordo com a idade informada
+//Retorna se o voto é obrigatório, facultativo ou dispensado
 #include<stdio.h>
 int main(){
-    float limite, fixo, variavel, vel;
-    scanf(" %f %f %f %f", &limite, &fixo, &variavel, &vel);
-    if(vel > limite){
-        printf("%.2f", (fixo + (vel - limite)*variavel));
+    int idade;
+    scanf(" %i", &idade);
+    if(idade < 16 || idade >= 70){
+        printf("DISPENSADO");
+    }else if(idade < 18){
+        printf("FACULTATIVO");
     }else{
-        printf("%.2f", 0.0);
+        printf("OBRIGATORIO");
     }
+    return 0;
 }
