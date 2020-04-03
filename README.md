@@ -1,4 +1,2 @@
 # Lab ICC
- Primeiro repositório, só um teste por enquanto
- 
- ..., só testando mais algumas coisas
+ Repositório dos exercícios da disciplina SSC0600 do curso de Engenharia de Computação da EESC.
