@@ -3,7 +3,8 @@
 int exponenciacao(int x, int n){
     int exp = 1;
     while(n > 0){
-
+        exp *= x;
+        n--;
     }
     return exp;
 }
@@ -19,6 +20,9 @@ int main(){
     while(n > 0){
         int temp;
         temp = n % 10;
-        soma += temp;
+        soma += temp * exponenciacao(10, cont);
+        n--;
+        n = n / 10;
     }
+    printf("%i", soma);
 }
