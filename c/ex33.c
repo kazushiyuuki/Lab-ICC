@@ -6,7 +6,7 @@ int main(){
     scanf(" %d", &n);
     while(n > 0){
         printf("%ld ", fib);
-        int aux;
+        long int aux;
         aux = fib;
         fib += controle;
         controle = aux;
