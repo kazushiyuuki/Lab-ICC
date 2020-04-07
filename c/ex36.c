@@ -1,4 +1,4 @@
-//Lê um número inteiro não negativo e inverte-o, ex: 1882 -> 2881
+//Verifica se o número é palíndromo
 #include<stdio.h>
 int exponenciacao(int x, int n){
     int exp = 1;
@@ -16,13 +16,19 @@ int main(){
         aux = aux / 10;
         cont++;
     }
+    aux = n;
     cont--;
-    while(n > 0){
+    while(aux > 0){
         int temp;
-        temp = n % 10;
+        temp = aux % 10;
         soma += temp * exponenciacao(10, cont);
         cont--;
-        n = n / 10;
+        aux = aux / 10;
     }
-    printf("%i", soma);
+    if(soma == n){
+        printf("S");
+    }
+    else{
+        printf("N");
+    }
 }
