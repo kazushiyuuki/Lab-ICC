@@ -21,7 +21,11 @@ int main(){
         int temp;
         temp = n % 10;
         soma += temp * exponenciacao(10, cont);
+<<<<<<< Updated upstream
         n--;
+=======
+        cont--;
+>>>>>>> Stashed changes
         n = n / 10;
     }
     printf("%i", soma);
