@@ -2,17 +2,10 @@
 #include<stdio.h>
 int main(){
     int n;
-    unsigned long fib = 1, controle = 0;
-    scanf(" %i", &n);
+    long int fib = 1, controle = 0;
+    scanf(" %d", &n);
     while(n > 0){
-        if(n > 1){
-            printf("%lu ", fib);
-        }
-        else
-        {
-            printf("%lu", fib);
-        }
-        
+        printf("%ld ", fib);
         int aux;
         aux = fib;
         fib += controle;
