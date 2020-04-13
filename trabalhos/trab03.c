@@ -15,9 +15,7 @@ int main(){
         if(pedregulhos == n){
             cont++;
             printf("%d %d\n", linhas, colunas);
-            if(colunas < aux){
-                aux = colunas;
-            }
+            aux = colunas;
         }
         colunas = 2;
         linhas++;
