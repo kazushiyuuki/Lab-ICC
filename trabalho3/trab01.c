@@ -44,7 +44,8 @@ int verificar(char tabuleiro[3][3])
                 return 0;
             }
         }
-        else if(tabuleiro[0][0] != ' ' && tabuleiro[0][0] == tabuleiro[1][1] && tabuleiro[1][1] == tabuleiro[2][2])
+    }
+    if(tabuleiro[0][0] != ' ' && tabuleiro[0][0] == tabuleiro[1][1] && tabuleiro[1][1] == tabuleiro[2][2])
         {
             if(tabuleiro[0][0] == 'X')
             {
@@ -55,16 +56,15 @@ int verificar(char tabuleiro[3][3])
                 return 0;
             }
         }
-        else if(tabuleiro[2][0] != ' ' && tabuleiro[2][0] == tabuleiro[1][1] && tabuleiro[1][1] == tabuleiro[0][2])
+    else if(tabuleiro[2][0] != ' ' && tabuleiro[2][0] == tabuleiro[1][1] && tabuleiro[1][1] == tabuleiro[0][2])
+    {
+        if(tabuleiro[2][0] == 'X')
         {
-            if(tabuleiro[2][0] == 'X')
-            {
-                return 1;
-            }
-            else
-            {
-                return 0;
-            }
+            return 1;
+        }
+        else
+        {
+            return 0;
         }
     }
     return -1;
@@ -107,7 +107,6 @@ int main()
 {
     char tabuleiro[3][3];
     char controle = 'S';
-    inserirComputador(tabuleiro);
     while(controle == 'S')
     {
         iniciarTabuleiro(tabuleiro);
@@ -147,6 +146,7 @@ int main()
         {
             printf("Empatou\n");
         }
+        imprimirTabuleiro(tabuleiro);
         printf("Deseja jogar novamente: ");
         scanf(" %c", &controle);
     }
