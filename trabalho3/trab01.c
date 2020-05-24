@@ -70,11 +70,25 @@ int verificar(char tabuleiro[3][3])
     return -1;
 }
 
+int posicaoValida(char c, int x, int y)
+{
+    if(c != ' ' || x > 2 || x < 0 || y > 2 || y < 0)
+    {
+        return 0;
+    }
+    return 1;
+}
+
 void inserirJogador(char tabuleiro[3][3])
 {
     printf("Digite a posicao desejada: ");
     int x, y;
     scanf("%d %d", &x, &y);
+    while(posicaoValida(tabuleiro[x][y], x, y) == 0)
+    {
+        printf("Posicao invvalida. Digite uma nova posicao: ");
+        scanf("%d %d", &x, &y);
+    }
     tabuleiro[x][y] = 'X';
 }
 
@@ -96,9 +110,10 @@ void inserirComputador(char tabuleiro[3][3])
 
 void imprimirTabuleiro(char tabuleiro[3][3])
 {
+    printf("  0   1   2\n");
     for(int i = 0; i < 3; i++)
     {
-        printf("%c | %c | %c\n", tabuleiro[i][0], tabuleiro[i][1], tabuleiro[i][2]);
+        printf("%d %c | %c | %c\n",i, tabuleiro[i][0], tabuleiro[i][1], tabuleiro[i][2]);
     }
 }
 
@@ -115,6 +130,7 @@ int main()
         while(jogadas < 9 && resultado == -1)
         {
             inserirJogador(tabuleiro);
+            jogadas++;
             resultado = verificar(tabuleiro);
             if(resultado == 1)
             {
@@ -123,9 +139,10 @@ int main()
             else if(resultado == 0)
             {
                 printf("O\n");
-            }else
+            }else if(jogadas < 9)
             {
                 inserirComputador(tabuleiro);
+                jogadas++;
                 resultado = verificar(tabuleiro);
                 if(resultado == 1)
                 {
@@ -140,11 +157,10 @@ int main()
                     imprimirTabuleiro(tabuleiro);
                 }
             }
-
-        }
-        if(jogadas == 9)
-        {
-            printf("Empatou\n");
+            else
+            {
+                printf("Empatou\n");
+            }
         }
         imprimirTabuleiro(tabuleiro);
         printf("Deseja jogar novamente: ");
