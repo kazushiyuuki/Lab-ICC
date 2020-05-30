@@ -1,0 +1,1 @@
+void imprimeresultado(int res);

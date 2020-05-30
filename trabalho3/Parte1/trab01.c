@@ -162,8 +162,9 @@ int main()
                 printf("Empatou\n");
             }
         }
+        printf("Tabuleiro Final: \n");
         imprimirTabuleiro(tabuleiro);
-        printf("Deseja jogar novamente: ");
+        printf("Deseja jogar novamente('S' para sim): ");
         scanf(" %c", &controle);
     }
 }
