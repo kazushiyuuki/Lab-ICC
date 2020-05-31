@@ -1,5 +1,5 @@
 
-//Jogo da velha, 3x3
+//Jogo da velha 3x3 simples
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -21,6 +21,7 @@ int verificar(char tabuleiro[3][3])
 {
     for(int i = 0; i < 3; i++)
     {
+        //Verifica as linhas
         if(tabuleiro [i][0] != ' ' && tabuleiro[i][0] == tabuleiro[i][1] && tabuleiro[i][1]== tabuleiro[i][2])
         {
             if(tabuleiro[i][0] == 'X')
@@ -33,6 +34,7 @@ int verificar(char tabuleiro[3][3])
             }
              
         }
+        //Verifica as colunas
         else if(tabuleiro [0][i] != ' ' && tabuleiro[0][i] == tabuleiro[1][i] && tabuleiro[1][i] == tabuleiro[2][i])
         {
             if(tabuleiro[0][i] == 'X')
@@ -45,6 +47,7 @@ int verificar(char tabuleiro[3][3])
             }
         }
     }
+    //Verifica a primeira diagonal
     if(tabuleiro[0][0] != ' ' && tabuleiro[0][0] == tabuleiro[1][1] && tabuleiro[1][1] == tabuleiro[2][2])
         {
             if(tabuleiro[0][0] == 'X')
@@ -56,6 +59,7 @@ int verificar(char tabuleiro[3][3])
                 return 0;
             }
         }
+    //Verifica a segunda diagonal
     else if(tabuleiro[2][0] != ' ' && tabuleiro[2][0] == tabuleiro[1][1] && tabuleiro[1][1] == tabuleiro[0][2])
     {
         if(tabuleiro[2][0] == 'X')
@@ -86,7 +90,7 @@ void inserirJogador(char tabuleiro[3][3])
     scanf("%d %d", &x, &y);
     while(posicaoValida(tabuleiro[x][y], x, y) == 0)
     {
-        printf("Posicao invvalida. Digite uma nova posicao: ");
+        printf("Posicao invalida. Digite uma nova posicao: ");
         scanf("%d %d", &x, &y);
     }
     tabuleiro[x][y] = 'X';
@@ -98,6 +102,7 @@ void inserirComputador(char tabuleiro[3][3])
     int aux = 0;
     while(aux == 0)
     {
+        //Gera dois números e insere caso seja uma posição vazia
         int x = rand() % 3;
         int y = rand() % 3;
         if(tabuleiro[x][y] == ' ')
@@ -122,11 +127,13 @@ int main()
 {
     char tabuleiro[3][3];
     char controle = 'S';
+    //Controle do jogar novamente
     while(controle == 'S')
     {
         iniciarTabuleiro(tabuleiro);
         imprimirTabuleiro(tabuleiro);
         int jogadas = 0, resultado = -1;
+        //Controle da partida por meio da quantidade de jogadas e se alguém venceu a partida
         while(jogadas < 9 && resultado == -1)
         {
             inserirJogador(tabuleiro);
@@ -162,9 +169,7 @@ int main()
                 printf("Empatou\n");
             }
         }
-        printf("Tabuleiro Final: \n");
-        imprimirTabuleiro(tabuleiro);
-        printf("Deseja jogar novamente('S' para sim): ");
+        printf("Deseja jogar novamente('S' para sim)? ");
         scanf(" %c", &controle);
     }
 }

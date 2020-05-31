@@ -1,1 +1,0 @@
-void leianumeros(int *x, int *y);
