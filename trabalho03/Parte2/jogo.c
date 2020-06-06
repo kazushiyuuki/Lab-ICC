@@ -25,10 +25,10 @@ void player(char ** tab, char c, int *x, int *y){
 
 void cpu(char ** tab,int n, char c, int jogadas, int *x, int * y){
     char ** vazias = (char **) malloc(jogadas * sizeof(char *));
-    int ** pos = (int **) malloc(jogadas *sizeof(int *));
+    int ** pos = (int **) malloc(jogadas*sizeof(int *));
 
     for(int i=0;i<jogadas;i++){
-        pos[i] = (int *) malloc(jogadas*sizeof(int));
+        pos[i] = (int *) malloc(2*sizeof(int));
     }
 
     int aux = 0;
@@ -50,6 +50,13 @@ void cpu(char ** tab,int n, char c, int jogadas, int *x, int * y){
     *x = pos[selec][0];
     *y = pos[selec][1];
     *vazias[selec] = c;
+
+    for(int i=0; i < jogadas; i++)
+    {
+        free(pos[i]);
+    }
+    free(vazias);
+    free(pos);
 }
 
 int verificar(char ** tab,int x, int y, int n,int min,char c, int jogador){
@@ -99,12 +106,12 @@ int verificar(char ** tab,int x, int y, int n,int min,char c, int jogador){
         baixoY = y-1;
         soma = 1;
 
-        while(cimaX >= 0 && cimaY < n && tab[cimaX][cimaY] == c){
+        while(cimaX >= 0 && cimaY < n && tab[cimaX][cimaY] == c && soma < min){
             cimaX--;
             cimaY++;
             soma++;
         }
-        while(baixoX < n && baixoY >= 0 && tab[baixoX][baixoY] == c){
+        while(baixoX < n && baixoY >= 0 && tab[baixoX][baixoY] == c && soma < min){
             baixoX++;
             baixoY--;
             soma++;
@@ -115,7 +122,7 @@ int verificar(char ** tab,int x, int y, int n,int min,char c, int jogador){
         }
     }
 
-    return 0;
+    return -1;
 }
 
 
@@ -133,4 +140,11 @@ void rendertab(char ** tab,int n,int x, int y){
         }
         printf("\n");
     }
+}
+
+void freemat(int n, char **v)
+{
+  int  i;
+  for (i=0; i<n; i++) free (v[i]); 
+  free (v);      
 }
