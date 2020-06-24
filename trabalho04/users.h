@@ -1,33 +1,25 @@
 void clear();
 
+typedef struct User{
 
+	char nick[20];
+  char nome[20];
 
+}User;
 
 typedef struct Post{
 
 	char autor[20];
-	char men[125];
-
-
-
+	char men[128];
 
 }Post;
 
-typedef struct User{
+int create_user();
 
-	char nome[20];
-	int nposts;
+void list_users();
 
-}User;
+void delete_user();
 
-void user_screen(FILE *info, User *user);
+void consultar_user();
 
-void create_post(FILE *info, FILE *post_list,  User *user);
-
-void list_posts(FILE *post_list, User *user);
-
-void delete_post(FILE *post_list, User *user);
-
-int count_posts(FILE *post_list);
-
-int get_position(FILE *post_list, User *user, int index);
+void user_screen(User *user);
