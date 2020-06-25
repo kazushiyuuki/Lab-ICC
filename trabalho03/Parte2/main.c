@@ -27,15 +27,15 @@ int main(int argv, char * argc[]){
         scanf("%d",&minSeq);
 
         int m;
-        printf("numero de jogadores: ");
+        printf("Numero de jogadores: ");
         scanf("%d",&m);
         jogador_t * jogs = (jogador_t *)malloc(m*sizeof(jogador_t));
 
         for(int i=0;i<m;i++){
             printf("--JOGADOR %d--\n",i+1);
-            printf("caracter: ");
+            printf("Caractere: ");
             scanf(" %c",&jogs[i].c);
-            printf("eh uma cpu? [1] SIM [0] NAO\n");
+            printf("Eh uma cpu? [1] SIM [0] NAO\n");
             scanf("%d",&jogs[i].cpu);
         }
 
@@ -45,7 +45,7 @@ int main(int argv, char * argc[]){
         int ultimoX;
         int ultimoY;
         while(jogadas >0 && vencedor == -1){
-            rendertab(tab,n,ultimoX,ultimoY);
+            rendertab(tab,n);
             if(jogs[jogAt].cpu == 0){
                 player(tab,jogs[jogAt].c,&ultimoX,&ultimoY);
                 vencedor = verificar(tab,ultimoX,ultimoY,n,minSeq,jogs[jogAt].c,jogAt);
@@ -56,15 +56,16 @@ int main(int argv, char * argc[]){
             jogAt = (jogAt+1)%m;
             jogadas--;
         }
-        rendertab(tab,n,ultimoX,ultimoY);
+        rendertab(tab,n);
 
         if(vencedor == -1){
             printf("Empate\n");
         }else{
-            printf("jogador %c venceu\n", jogs[vencedor].c);
+            printf("Jogador %c venceu\n", jogs[vencedor].c);
         }
-        printf("jogar novamente('S' para sim)? ");
+        printf("Jogar novamente('S' para sim)? ");
         scanf(" %c", &reiniciar);
         freemat(n, tab);
+        free(jogs);
     }while(reiniciar == 'S');
 }

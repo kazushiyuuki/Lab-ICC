@@ -15,6 +15,7 @@ void zerarTab(char ** tab, int n){
 void player(char ** tab, char c, int *x, int *y){
     int lin,col;
     do{
+        printf("%c: ", c);
         scanf("%d %d",&lin,&col);
     }while(tab[lin][col] != ' ');
 
@@ -126,7 +127,7 @@ int verificar(char ** tab,int x, int y, int n,int min,char c, int jogador){
 }
 
 
-void rendertab(char ** tab,int n,int x, int y){
+void rendertab(char ** tab,int n){
     printf("\e[1;1H\e[2J");
     printf("  ");
      for(int i=0;i<n;i++){
