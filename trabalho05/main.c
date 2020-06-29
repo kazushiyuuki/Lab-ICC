@@ -1,10 +1,12 @@
 #include<stdio.h>
 #include"jogo.h"
 
-int main()
+/*int main()
 {
     pont board = startBoard();
-    insertBoard(board);
-    printBoard(board);
+    int numJogadores;
+    printf("Digite o numero de jogadores: ");
+    scanf("%d", &numJogadores);
+   // insertBoard(board);
     resetBoard(board);
-}
+}*/

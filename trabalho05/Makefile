@@ -1,3 +1,5 @@
+deck.o : deck.c
+	gcc -o deck.o -c deck.c
 jogo.o : jogo.c
 	gcc -o jogo.o -c jogo.c
 main.o : main.c

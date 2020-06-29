@@ -1,4 +1,4 @@
-typedef struct aux
+typedef struct
 {
     char formato;
     char cor;
@@ -14,6 +14,8 @@ typedef struct
 typedef board * pont;
 
 pont startBoard();
+
+void reallocBoard(pont board, int linha, int coluna);
 
 void resetBoard(pont board);
 
