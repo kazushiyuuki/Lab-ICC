@@ -17,4 +17,8 @@ typedef deque * pontDeque;
 
 pontDeque iniciarDeque();
 
+pontDeque gerarMonte();
+
 void resetarDeque(pontDeque deque);
+
+void printDeque(pontDeque deque);

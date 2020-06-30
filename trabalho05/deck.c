@@ -11,53 +11,100 @@ pontDeque iniciarDeque()
     aux->inicio = NULL;
     aux->qtdCartas = 0;
 
-    char formato[] = {'Q','C','L', 'E', 'F', 'S'};
-    int cor[] = {1, 2, 3, 4, 5, 6};
-    int qtd[] = {3, 3, 3, 3, 3, 3};
+    pontDeque monte = gerarMonte();
     srand(time(0));
-
-    int num;
-    pontCarta ant;
-    //Tá tudo torto, primeiro pensar em alguma forma de sortear todas as 36 cartas, e também consertar o preenchimento do deque
-    while(aux->qtdCartas < 108)
+    int passos;
+    pontCarta cartaMonte, cartaAnterior;
+    while(monte->qtdCartas != 0) 
     {
-        num = rand()%6;
-        while(qtd[num] == 0)
+        if(monte->qtdCartas != 1)
         {
-            num = (num+1)%6;
-        }
-        for(int i=0; i < 6; i++)
-        {
-            printf("-%d-", qtd[i]);
-        }
-        pontCarta card = (pontCarta)malloc(sizeof(carta));
-        card->info.cor = cor[num];
-        card->info.formato = formato[num];
-        qtd[num]--;
-        aux->qtdCartas++; 
-
-        printf("%d : [%c%d]\n", aux->qtdCartas, card->info.formato, card->info.cor);
-        free(card);
-
-        if(aux->qtdCartas == 0)
-        {
-            aux->inicio = card;
-            ant = aux->inicio;
+            passos = rand()%(monte->qtdCartas - 1);
         }
         else
         {
-            ant->prox = card;
-            ant = card;
+            passos = 0;
         }
+        cartaAnterior = NULL;
+        cartaMonte = monte->inicio;
+        while(passos != 0)
+        {
+            cartaAnterior = cartaMonte;
+            cartaMonte = cartaMonte->prox;
+            passos--;
+        }
+        if(cartaAnterior == NULL)
+        {
+            monte->inicio = monte->inicio->prox;
+            monte->qtdCartas--;
+        }
+        else
+        {
+            cartaAnterior->prox = cartaMonte->prox;
+            monte->qtdCartas--;
+        }
+        if(aux->inicio == NULL)
+        {
+            aux->inicio = cartaMonte;
+            aux->fim = cartaMonte;
+            aux->fim->prox = NULL;
+            aux->qtdCartas++;
+        }
+        else
+        {
+            pontCarta temp = aux->inicio;
+            aux->inicio = cartaMonte;
+            aux->inicio->prox = temp;
+            aux->qtdCartas++;
+        }
+        
     }
     return aux;
+}
+
+pontDeque gerarMonte()
+{
+    // Q - Quadrado
+    // C - Circulo
+    // L - Losango
+    // E - Estrela 4 pontas
+    // F - Flor
+    // S - Superestrela...
+    char formato[] = {'Q','C','L', 'E', 'F', 'S'};
+    int cor[] = {1, 2, 3, 4, 5, 6};
+    pontDeque monte = (pontDeque)malloc(sizeof(deque));
+    pontCarta cartaAtual, cartaAnterior = NULL;
+    for(int m = 0; m < 3; m++)
+    {
+        for(int j = 0; j < 6; j++)
+        {
+            for(int k = 0; k < 6; k++)
+            {
+                cartaAtual = (pontCarta)malloc(sizeof(carta));
+                if(cartaAnterior != NULL)
+                {
+                    cartaAnterior->prox = cartaAtual;
+                }
+                else
+                {
+                    monte->inicio = cartaAtual;
+                }
+                cartaAtual->info.formato = formato[j];
+                cartaAtual->info.cor = cor[k];
+                cartaAnterior = cartaAtual;
+                monte->qtdCartas++;
+                monte->fim = cartaAtual;
+            }
+        }
+    }
+    return monte;
 }
 
 void resetarDeque(pontDeque deque)
 {
     pontCarta aux = deque->inicio;
     pontCarta apagar;
-    while(deque->qtdCartas != 0)
+    while(aux != NULL && deque->qtdCartas != 0)
     {
         apagar = aux;
         if(aux->prox != NULL)
@@ -67,10 +114,19 @@ void resetarDeque(pontDeque deque)
         free(apagar);
         deque->qtdCartas--;
     }
+    free(deque);
 }
 
-int main()
+void printDeque(pontDeque deque)
 {
-    pontDeque deque = iniciarDeque();
-    resetarDeque(deque);
+    pontCarta aux = deque->inicio;
+    int cont = 1; 
+    printf("Imprimindo deque: %d cartas\n", deque->qtdCartas);
+    while(aux != NULL && cont <= deque->qtdCartas)
+    {
+        printf("%d : [%c%d]\n", cont, aux->info.formato, aux->info.cor);
+        aux = aux->prox;
+        cont++;
+    }
+    printf("Fim--------------\n");
 }

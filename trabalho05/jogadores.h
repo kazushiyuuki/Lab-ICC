@@ -1,4 +1,4 @@
-#include"jogo.h"
+#include"deck.h"
 
 typedef struct
 {
@@ -12,3 +12,5 @@ typedef struct jogadores
     aux * deck;
     char nome[20];
 };
+
+
