@@ -8,11 +8,12 @@ int main()
     //printDeque(monte);
     pontJogadores jog = iniciarPiecesJog(monte);
     fgets(jog->nome, 20, stdin);
-    printarJog(jog);
+    //printarJog(jog);
     //printDeque(monte);
     //resetarDeque(monte);
     pont tab = startBoard();
-    jogar(tab, jog);
-    printBoard(tab);
+    //jogar(tab, jog);
+    //printBoard(tab);
+    leituraComandos(tab, jog);
     resetBoard(tab);
 }

@@ -101,20 +101,3 @@ void printBoard(pont board)
         printf("\n");
     }
 }
-
-void insertBoard(pont board)
-{
-    printBoard(board);
-    printf("\n\n");
-    board->pieces[0][0].cor = '1';
-    board->pieces[0][0].formato = 'E';
-    reallocBoard(board, 0, 0);
-    printBoard(board);
-    printf("\n\n");
-    board->pieces[1][2].cor = '2';
-    board->pieces[1][2].formato = 'E';
-    reallocBoard(board, 1, 2);
-    printBoard(board);
-    printf("\n");
-}
-

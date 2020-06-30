@@ -17,3 +17,9 @@ void trocarPiecesJog(pontDeque monte, pontJogadores jog, int pos);
 void printarJog(pontJogadores jog);
 
 void jogar(pont board, pontJogadores jog);
+
+void leituraComandos(pont board, pontJogadores jog);
+
+void fgetss(char str[], int n);
+
+void toLower(char str[]);
