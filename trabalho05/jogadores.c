@@ -41,7 +41,7 @@ void printarJog(pontJogadores jog)
     printf("Jogador: %s\n", jog->nome);
     for(int i = 0; i < jog->qtdPieces; i++)
     {
-        printf("[%c%d] ", jog->piecesJogador[i].formato, jog->piecesJogador[i].cor);
+        printf("[%c%c] ", jog->piecesJogador[i].formato, jog->piecesJogador[i].cor);
     }
     printf("\n");
 }
@@ -67,7 +67,7 @@ void jogar(pont board, pontJogadores jog)
             aux++;
         }
     }
-    /*while(linha >= board->rows || coluna >= board->columns || aux != 0){
+    while(linha >= board->rows || coluna >= board->columns || aux != 0){
         printf("\n***invalid move***\n");
         printf("jogar p1 x y\n");
         scanf(" %c%c %d %d", &peca, &numero, &linha, &coluna);
@@ -82,7 +82,7 @@ void jogar(pont board, pontJogadores jog)
                 aux++;
             }
         }
-    }*/
+    }
     board->pieces[linha][coluna].cor = numero;
     board->pieces[linha][coluna].formato = peca;
     reallocBoard(board, linha, coluna);

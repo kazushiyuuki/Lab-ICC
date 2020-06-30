@@ -71,7 +71,7 @@ pontDeque gerarMonte()
     // F - Flor
     // S - Superestrela...
     char formato[] = {'Q','C','L', 'E', 'F', 'S'};
-    int cor[] = {1, 2, 3, 4, 5, 6};
+    char cor[] = {'1', '2', '3', '4', '5', '6'};
     pontDeque monte = (pontDeque)malloc(sizeof(deque));
     pontCarta cartaAtual, cartaAnterior = NULL;
     for(int m = 0; m < 3; m++)
