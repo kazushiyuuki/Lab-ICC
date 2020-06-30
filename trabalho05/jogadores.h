@@ -3,14 +3,15 @@
 typedef struct
 {
     piece piecesJogador[6];
+    int pontos;
     int qtdPieces;
-}aux;
-
-
-typedef struct jogadores
-{
-    aux * deck;
     char nome[20];
-};
+}jogadores;
 
+typedef jogadores * pontJogadores;
 
+pontJogadores iniciarPiecesJog(pontDeque monte);
+
+void trocarPiecesJog(pontDeque monte, pontJogadores jog, int pos);
+
+void printarJog(pontJogadores jog);
