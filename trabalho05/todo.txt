@@ -1,0 +1,7 @@
+1 - Leitura dos comandos e direcionamento para as respectivas funções
+2 - Corrigir função de jogar para se adequar a 1
+3 - Implementar função para criar jogadores
+4 - Implementar função de verificação de posição antes de jogar
+5 - Implementar função para contar pontos
+6 - Implementar cheat mode
+7 - Unir tudo na main.c 
