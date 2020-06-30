@@ -5,10 +5,14 @@ int main()
 {
     pontDeque monte = iniciarDeque();
     printf("Nome: ");
-    printDeque(monte);
+    //printDeque(monte);
     pontJogadores jog = iniciarPiecesJog(monte);
     fgets(jog->nome, 20, stdin);
     printarJog(jog);
-    printDeque(monte);
-    resetarDeque(monte);
+    //printDeque(monte);
+    //resetarDeque(monte);
+    pont tab = startBoard();
+    jogar(tab, jog);
+    printBoard(tab);
+    resetBoard(tab);
 }

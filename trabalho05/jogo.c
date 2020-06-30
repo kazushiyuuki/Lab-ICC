@@ -9,6 +9,8 @@ pont startBoard()
     board->columns = 1;
     board->pieces = (piece**)malloc(sizeof(piece*));
     board->pieces[0] = (piece*)malloc(sizeof(piece));
+    board->pieces[0][0].cor = ' ';
+    board->pieces[0][0].formato = ' ';
     return board;
 }
 
@@ -103,13 +105,16 @@ void printBoard(pont board)
 void insertBoard(pont board)
 {
     printBoard(board);
+    printf("\n\n");
     board->pieces[0][0].cor = '1';
     board->pieces[0][0].formato = 'E';
     reallocBoard(board, 0, 0);
     printBoard(board);
+    printf("\n\n");
     board->pieces[1][2].cor = '2';
     board->pieces[1][2].formato = 'E';
     reallocBoard(board, 1, 2);
     printBoard(board);
+    printf("\n");
 }
 

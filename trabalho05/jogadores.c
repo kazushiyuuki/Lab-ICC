@@ -46,6 +46,47 @@ void printarJog(pontJogadores jog)
     printf("\n");
 }
 
+void jogar(pont board, pontJogadores jog)
+{   
+    printf("\n");
+    printBoard(board);
+    printf("\n");
+    char peca, numero;
+    int linha, coluna;
+    printf("jogar p1 x y\n");
+    scanf(" %c%c %d %d", &peca, &numero, &linha, &coluna);
+    int i, aux = 0;
+    for(i = 0; i < jog->qtdPieces; i++)
+    {
+        if(peca == jog->piecesJogador[i].formato && numero == jog->piecesJogador[i].cor)
+        {
+            aux = 0;
+            break;
+        }
+        else{
+            aux++;
+        }
+    }
+    /*while(linha >= board->rows || coluna >= board->columns || aux != 0){
+        printf("\n***invalid move***\n");
+        printf("jogar p1 x y\n");
+        scanf(" %c%c %d %d", &peca, &numero, &linha, &coluna);
+        for(i = 0; i < jog->qtdPieces; i++)
+        {
+            if( peca == jog->piecesJogador[i].formato && (int)numero == jog->piecesJogador[i].cor)
+            {
+                aux = 0;
+                break;
+            }
+            else{
+                aux++;
+            }
+        }
+    }*/
+    board->pieces[linha][coluna].cor = numero;
+    board->pieces[linha][coluna].formato = peca;
+    reallocBoard(board, linha, coluna);
+}
 //Função de leitura, e classificação de funcao de trocar jogar ou passar
 //Função de posição valida
 //Funcao de contar pontos
