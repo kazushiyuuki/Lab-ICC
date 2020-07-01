@@ -20,6 +20,8 @@ void jogar(pont board, pontJogadores jog);
 
 void leituraComandos(pont board, pontJogadores jog);
 
-void fgetss(char str[], int n);
+void fgetss(char str[], int n, char tipoComando[]);
 
 void toLower(char str[]);
+
+int verificaPeca(char formato, char cor);

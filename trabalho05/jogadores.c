@@ -95,33 +95,55 @@ void jogar(pont board, pontJogadores jog)
 //O que falta: identificar as peças que vão ser trocadas ou jogadas para passar para as funções
 void leituraComandos(pont board, pontJogadores jog)
 {
-    int aux = 0;
+   //Definição das strings para comparação com os comandos lidos
     char trocar[] = "trocar";
     char jogar[] = "jogar";
     char passar[] = "passar";
+
+    int aux = 0;
     while(aux != -1)
     {
         printBoard(board);
         printf("===========\n");
         printarJog(jog);
-        char comando[25];
+        char comando[26];
         char funcao[7];
         int i = 0;
         if(aux == 0)
         {
-            printf("Opcoes: trocar p1 [p2 p3...] | jogar p1 x y | passar\n");
-            fgetss(comando, 24);
+            printf("Opcoes: trocar p1 [p2 p3...] | jogar p1 x y | passar\n", aux);
+            fgetss(comando, 25, "Comando");
+            toLower(comando);
             while(comando[i] != ' ' && i < 6)
             {
                 funcao[i] = comando[i];
                 i++;
             }
-            funcao[i] = '\0';
-            toLower(funcao);
+            funcao[6] = '\0';
             if(!strcmp(funcao, trocar))
             {
-                printf("Funcao trocar acionada\n");
-                aux = -1;
+                int auxTrocar = i+1;
+                int tamString = strlen(comando);
+                piece pecasTroca[6];
+                int contPecas = 0;
+                while(auxTrocar+1 < tamString)
+                {
+                    if(verificaPeca(comando[auxTrocar], comando[auxTrocar+1]))
+                    {
+                        pecasTroca[contPecas].formato = comando[auxTrocar];
+                        pecasTroca[contPecas].cor = comando[auxTrocar+1];
+                        contPecas++;
+                        aux = -1;
+                        auxTrocar += 3;
+                    }
+                    else
+                    {   
+                        printf("Comando invalido!\n");
+                        aux = 0;
+                        break;
+                    }
+                }
+                //Até aqui a função verifica se as entradas são válidas, falta comparar com as peças do jogador para saber se o jogador possui essas peças 
             }
             else if(!strcmp(funcao, jogar))
             {
@@ -141,9 +163,8 @@ void leituraComandos(pont board, pontJogadores jog)
         else if(aux == 2 && jog->qtdPieces != 0)
         {
             printf("Opcoes: jogar p1 x y | passar\n");
-            fgetss(comando, 24);
-            i = 0;
-            while(comando[i] != ' ' && i < 6)
+            fgetss(comando, 24, "Comando");
+            while(comando[i] != ' ' && i < 7)
             {
                 funcao[i] = comando[i];
                 i++;
@@ -170,21 +191,26 @@ void leituraComandos(pont board, pontJogadores jog)
 
 //Função para leitura de string que não tem problema de buffer e não dá segfault se passar do limite
 //str é vetor onde quer armazenar e n é a última posição do possível do vetor
-void fgetss(char str[], int n){
+void fgetss(char str[], int n, char tipoComando[])
+{
   char a;
   int i;
-  for(i = 0; i < n; i++){
+  for(i = 0; i < n; i++)
+  {
     a = getc(stdin);
-    if(a == '\n'){
+    if(a == '\n')
+    {
       str[i] = '\0';
       break;
     }
     str[i] = a;
   }
   i = 0;
-  while(a != '\n'){
-    if(i == 1){
-      printf("\nMensagem maior que o limite! Serao considerados apenas os primeiros %d caracteres.\n", n);
+  while(a != '\n')
+  {
+    if(i == 1)
+    {
+      printf("\n%s maior que o limite! Serao considerados apenas os primeiros %d caracteres.\n", tipoComando, n);
       str[n] = '\0';
     }
     a = getc(stdin);
@@ -201,4 +227,33 @@ void toLower(char str[])
             str[i] = str[i] + 32;            
         }
     }
+}
+
+//Retorna 1 se os caracteres de formato e cor forem válidos e 0 para o contrário
+int verificaPeca(char formato, char cor)
+{
+    //Definição dos vetores contendo os formatos e cores possíveis
+    char formatos[] = {'q','c','l', 'e', 'f', 's'};
+    char cores[] = {'1', '2', '3', '4', '5', '6'};
+
+    int resFormato = 0, resCor = 0, i;
+    for(i = 0; i < 6 && resFormato == 0; i++)
+    {
+        if(formatos[i] == formato)
+        {
+            resFormato = 1;
+        }
+    }
+    for(i = 0; i < 6 && resCor == 0; i++)
+    {
+        if(cores[i] == cor)
+        {
+            resCor = 1;
+        }
+    }
+    if(resCor == 1 && resFormato == 1)
+    {
+        return 1;
+    }
+    return 0;
 }
