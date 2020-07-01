@@ -210,7 +210,6 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
                 {
                     aux = verificaTroca(monte, jog, pecasTroca, contPecas);
                 }
-                //Só falta realizar a troca em si
             }
             else if(!strcmp(funcao, jogar))
             {
@@ -396,6 +395,7 @@ int verificaPeca(char formato, char cor)
 int verificaTroca(pontDeque monte, pontJogadores jog, piece pecas[], int qtdPecasTtroca)
 {
     int cont = 0;
+    int posTroca[6];
     for(int i = 0; i < qtdPecasTtroca; i++)
     {
         for(int j = 0; j < jog->qtdPieces; j++)
@@ -404,6 +404,7 @@ int verificaTroca(pontDeque monte, pontJogadores jog, piece pecas[], int qtdPeca
             {
                 if(pecas[i].cor == jog->piecesJogador[j].cor)
                 {
+                    posTroca[cont] = j;
                     cont++;
                 }
             }
@@ -412,11 +413,16 @@ int verificaTroca(pontDeque monte, pontJogadores jog, piece pecas[], int qtdPeca
     if(cont >= qtdPecasTtroca)
     {
         printf("Realizando troca de: ");
-        for(int k = 0; k < qtdPecasTtroca; k++)
+        int k;
+        for(k = 0; k < qtdPecasTtroca; k++)
         {
             printf("[%c%c] ", pecas[k].formato, pecas[k].cor);
         }
         printf("\n");
+        for(k = 0; k < cont; k++)
+        {
+            trocarPiecesJog(monte, jog, posTroca[k]);
+        }
         return -1;
     }
     else
