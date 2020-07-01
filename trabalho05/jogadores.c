@@ -57,7 +57,7 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
     else{
         for(i = 0; i < jog->qtdPieces; i++)
         {   
-            if(peca == (jog->piecesJogador[i].formato + 32) && numero == jog->piecesJogador[i].cor)
+            if(peca == jog->piecesJogador[i].formato && numero == jog->piecesJogador[i].cor)
             {
                 aux = 0;
                 pos = i;
@@ -73,7 +73,7 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
         printf("***Jogada invalida***\n");
         printf("Jogue novamente: p1 x y\n");
         fgetss(jogada, 11, "jogada");
-        toLower(jogada);
+        toUpper(jogada);
         peca = jogada[0];
         numero = jogada[1];
         int j, cont = 0, k = 0;
@@ -115,7 +115,7 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
         else{
             for(i = 0; i < jog->qtdPieces; i++)
             {
-                if(peca == (jog->piecesJogador[i].formato + 32) && numero == jog->piecesJogador[i].cor)
+                if(peca == jog->piecesJogador[i].formato && numero == jog->piecesJogador[i].cor)
                 {
                     aux = 0;
                     pos = i;
@@ -127,7 +127,7 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
             }
         }
     }
-    board->pieces[linha][coluna].formato = (peca - 32); //Volta o char para letra maiuscula
+    board->pieces[linha][coluna].formato = peca; //Volta o char para letra maiuscula
     board->pieces[linha][coluna].cor = numero;
     reallocBoard(board, linha, coluna);
     
@@ -156,9 +156,9 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
 void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
 {
    //Definição das strings para comparação com os comandos lidos
-    char trocar[] = "trocar";
-    char jogar[] = "jogar";
-    char passar[] = "passar";
+    char trocar[] = "TROCAR";
+    char jogar[] = "JOGAR";
+    char passar[] = "PASSAR";
 
     int aux = 0;
     while(aux != -1)
@@ -174,9 +174,9 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
         int i = 0;
         if(aux == 0)
         {
-            printf("Opcoes: trocar p1 [p2 p3...] | jogar p1 x y | passar\n", aux);
+            printf("Opcoes: trocar p1 [p2 p3...] | jogar p1 x y | passar\n");
             fgetss(comando, 25, "Comando");
-            toLower(comando);
+            toUpper(comando);
             while(comando[i] != ' ' && i < 6)
             {
                 funcao[i] = comando[i];
@@ -206,7 +206,11 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
                         break;
                     }
                 }
-                //Até aqui a função verifica se as entradas são válidas, falta comparar com as peças do jogador para saber se o jogador possui essas peças 
+                if(aux == -1)
+                {
+                    aux = verificaTroca(monte, jog, pecasTroca, contPecas);
+                }
+                //Só falta realizar a troca em si
             }
             else if(!strcmp(funcao, jogar))
             {
@@ -261,7 +265,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
         {
             printf("Opcoes: jogar p1 x y | passar\n");
             fgetss(comando, 24, "Comando");
-            toLower(comando);
+            toUpper(comando);
             while(comando[i] != ' ' && i < 7)
             {
                 funcao[i] = comando[i];
@@ -349,13 +353,13 @@ void fgetss(char str[], int n, char tipoComando[])
   }
 }
 
-void toLower(char str[])
+void toUpper(char str[])
 {
     int tam = strlen(str);
     for(int i = 0; i <= tam; i++){
-        if((str[i] >= 65 ) && (str[i] <= 90 ))
+        if((str[i] >= 97 ) && (str[i] <= 122 ))
         {
-            str[i] = str[i] + 32;            
+            str[i] = str[i] - 32;            
         }
     }
 }
@@ -364,7 +368,7 @@ void toLower(char str[])
 int verificaPeca(char formato, char cor)
 {
     //Definição dos vetores contendo os formatos e cores possíveis
-    char formatos[] = {'q','c','l', 'e', 'f', 's'};
+    char formatos[] = {'Q','C','L', 'E', 'F', 'S'};
     char cores[] = {'1', '2', '3', '4', '5', '6'};
 
     int resFormato = 0, resCor = 0, i;
@@ -387,4 +391,38 @@ int verificaPeca(char formato, char cor)
         return 1;
     }
     return 0;
+}
+
+int verificaTroca(pontDeque monte, pontJogadores jog, piece pecas[], int qtdPecasTtroca)
+{
+    int cont = 0;
+    for(int i = 0; i < qtdPecasTtroca; i++)
+    {
+        for(int j = 0; j < jog->qtdPieces; j++)
+        {
+            if(pecas[i].formato == jog->piecesJogador[j].formato)
+            {
+                if(pecas[i].cor == jog->piecesJogador[j].cor)
+                {
+                    cont++;
+                }
+            }
+        }
+    }
+    if(cont >= qtdPecasTtroca)
+    {
+        printf("Realizando troca de: ");
+        for(int k = 0; k < qtdPecasTtroca; k++)
+        {
+            printf("[%c%c] ", pecas[k].formato, pecas[k].cor);
+        }
+        printf("\n");
+        return -1;
+    }
+    else
+    {
+        printf("Pecas invalidas para troca!\n");
+        return 0;
+    }
+    
 }

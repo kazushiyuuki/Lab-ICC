@@ -22,6 +22,8 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog);
 
 void fgetss(char str[], int n, char tipoComando[]);
 
-void toLower(char str[]);
+void toUpper(char str[]);
 
 int verificaPeca(char formato, char cor);
+
+int verificaTroca(pontDeque monte, pontJogadores jog, piece pecas[], int qtdPecasTtroca);
