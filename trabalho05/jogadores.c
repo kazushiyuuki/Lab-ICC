@@ -56,7 +56,7 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
     }
     else{
         for(i = 0; i < jog->qtdPieces; i++)
-        {
+        {   
             if(peca == (jog->piecesJogador[i].formato + 32) && numero == jog->piecesJogador[i].cor)
             {
                 aux = 0;
@@ -68,11 +68,9 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
             }
         }
     }
-    
     char jogada[11];
     while(aux != 0){
         printf("***Jogada invalida***\n");
-        printf("%c", peca);
         printf("Jogue novamente: p1 x y\n");
         fgetss(jogada, 11, "jogada");
         toLower(jogada);
@@ -89,10 +87,10 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
         }
         posicao[cont] = '\0';
         if(cont == 1){
-            linha = posicao[0] - '0';    //transformando a linha, de char para int
+            linha = posicao[0] - '0';    //Transformando a linha, de char para int
         }
         else{
-            linha = atoi(posicao);       //transformando a linha, de string para int
+            linha = atoi(posicao);       //Transformando a linha, de string para int
         }
         j++;
         cont = 0;
@@ -105,10 +103,10 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
         }
         posicao[cont] = '\0';
         if(cont == 1){
-            coluna = posicao[0] - '0';   //transformando a coluna, de char para int
+            coluna = posicao[0] - '0';   //Transformando a coluna, de char para int
         }
         else{
-            coluna = atoi(posicao);      //transformando a coluna, de string para int
+            coluna = atoi(posicao);      //Transformando a coluna, de string para int
         }
     
         if(linha >= board->rows || coluna >= board->columns || linha < 0 || coluna < 0 || board->pieces[linha][coluna].cor != ' ' || board->pieces[linha][coluna].formato != ' '){
@@ -129,11 +127,23 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
             }
         }
     }
-    board->pieces[linha][coluna].formato = (peca - 32); //Voltando para letra maiuscula
+    board->pieces[linha][coluna].formato = (peca - 32); //Volta o char para letra maiuscula
     board->pieces[linha][coluna].cor = numero;
     reallocBoard(board, linha, coluna);
-    trocarPiecesJog(monte, jog, pos);
-    //Remover a peça do deck do jogador depois de jogar
+    
+    int k = 0;
+    for(i = 0; i < jog->qtdPieces; i++){
+        if(i != pos){
+            jog->piecesJogador[k].formato = jog->piecesJogador[i].formato;
+            jog->piecesJogador[k].cor = jog->piecesJogador[i].cor;
+            k++;
+        }
+    }
+    jog->piecesJogador[k].formato = '\0';
+    jog->piecesJogador[k].cor = '\0';
+    jog->qtdPieces--;
+    trocarPiecesJog(monte, jog, jog->qtdPieces);
+    //Remove a peça do deck do jogador depois de jogar
     pontCarta apagar = monte->fim;
     free(apagar);
     monte->qtdCartas--;
@@ -152,7 +162,10 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
 
     int aux = 0;
     while(aux != -1)
-    {
+    {   
+        if(aux == 0){
+            jog->qtdPieces = 6;     //Setando a quantidade de peças iniciais somente em cada nova jogada
+        }
         printBoard(board);
         printf("===========\n");
         printarJog(jog);
@@ -248,13 +261,13 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
         {
             printf("Opcoes: jogar p1 x y | passar\n");
             fgetss(comando, 24, "Comando");
+            toLower(comando);
             while(comando[i] != ' ' && i < 7)
             {
                 funcao[i] = comando[i];
                 i++;
             }
             funcao[i] = '\0';
-            toLower(funcao);
             if(!strcmp(funcao, jogar))
             {
                 printf("Funcao jogar acionada\n");
