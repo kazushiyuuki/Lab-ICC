@@ -124,7 +124,7 @@ void printDeque(pontDeque deque)
     printf("Imprimindo deque: %d cartas\n", deque->qtdCartas);
     while(aux != NULL && cont <= deque->qtdCartas)
     {
-        printf("%d : [%c%d]\n", cont, aux->info.formato, aux->info.cor);
+        printf("%d : [%c%c]\n", cont, aux->info.formato, aux->info.cor);
         aux = aux->prox;
         cont++;
     }
