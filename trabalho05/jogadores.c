@@ -48,47 +48,91 @@ void printarJog(pontJogadores jog)
     printf("\n");
 }
 
-void jogar(pont board, pontJogadores jog)
-{   
-    printf("\n");
-    printBoard(board);
-    printf("\n");
-    char peca, numero;
-    int linha, coluna;
-    printf("jogar p1 x y\n");
-    scanf(" %c%c %d %d", &peca, &numero, &linha, &coluna);
-    int i, aux = 0;
-    for(i = 0; i < jog->qtdPieces; i++)
-    {
-        if(peca == jog->piecesJogador[i].formato && numero == jog->piecesJogador[i].cor)
-        {
-            aux = 0;
-            break;
-        }
-        else{
-            aux++;
-        }
-    }
-    while(linha >= board->rows || coluna >= board->columns || aux != 0){
-        printf("\n***invalid move***\n");
-        printf("jogar p1 x y\n");
-        scanf(" %c%c %d %d", &peca, &numero, &linha, &coluna);
-        for(i = 0; i < jog->qtdPieces; i++)
-        {
-            if( peca == jog->piecesJogador[i].formato && (int)numero == jog->piecesJogador[i].cor)
-            {
-                aux = 0;
-                break;
-            }
-            else{
-                aux++;
-            }
-        }
-    }
-    board->pieces[linha][coluna].cor = numero;
-    board->pieces[linha][coluna].formato = peca;
-    reallocBoard(board, linha, coluna);
+void joga(pont board, pontJogadores jog, char peca, char numero, int linha, int coluna)
+{  
+   int i, aux = 0;
+   if(linha >= board->rows || coluna >= board->columns || linha < 0 || coluna < 0 || board->pieces[linha][coluna].cor != ' ' || board->pieces[linha][coluna].formato != ' '){
+       aux = 1;
+   }
+   else{
+       for(i = 0; i < jog->qtdPieces; i++)
+       {
+           if(peca == jog->piecesJogador[i].formato && numero == jog->piecesJogador[i].cor)
+           {
+               aux = 0;
+               break;
+           }
+           else{
+               aux = 1;
+           }
+       }
+   }
+ 
+   char jogada[11];
+   while(aux != 0){
+       printf("***Jogada invalida***\n");
+       printf("Jogue novamente: p1 x y\n");
+       fgetss(jogada, 11, "jogada");
+       peca = jogada[0];
+       numero = jogada[1];
+       int j, cont = 0, k = 0;
+       char posicao[4];
+       for(j = 3; j < 11; j++){
+           if(jogada[j] == '\0' || jogada[j] == ' '){
+               break;
+           }
+           posicao[cont] = jogada[j];
+           cont++;
+       }
+       posicao[cont] = '\0';
+       if(cont == 1){
+           linha = posicao[0] - '0';    //transformando a linha, de char para int
+       }
+       else{
+           linha = atoi(posicao);       //transformando a linha, de string para int
+       }
+       j++;
+       cont = 0;
+       for(k = j; k < 11; k++){
+           if(jogada[k] == '\0' || jogada[k] == ' '){
+               break;
+           }
+           posicao[cont] = jogada[k];
+           cont++;
+       }
+       posicao[cont] = '\0';
+       if(cont == 1){
+           coluna = posicao[0] - '0';   //transformando a coluna, de char para int
+       }
+       else{
+           coluna = atoi(posicao);      //transformando a coluna, de string para int
+       }
+   
+       if(linha >= board->rows || coluna >= board->columns || linha < 0 || coluna < 0 || board->pieces[linha][coluna].cor != ' ' || board->pieces[linha][coluna].formato != ' '){
+           aux = 1;
+       }
+       else{
+           for(i = 0; i < jog->qtdPieces; i++)
+           {
+               if(peca == jog->piecesJogador[i].formato && numero == jog->piecesJogador[i].cor)
+               {
+                   aux = 0;
+                   break;
+               }
+               else{
+                   aux = 1;
+               }
+           }
+       }
+   }
+   board->pieces[linha][coluna].cor = numero;
+   board->pieces[linha][coluna].formato = peca;
+   reallocBoard(board, linha, coluna);
+  
+   //Falta remover a peça do deck do jogador depois de jogar
+ 
 }
+
 
 //Função recebe o tabuleiro e o ponteiro para o jogador
 //O que faz até o momento: identifica as funções trocar, jogar, passar e comandos inválidos. Aceita também os comandos em maiusculo.
@@ -148,6 +192,40 @@ void leituraComandos(pont board, pontJogadores jog)
             else if(!strcmp(funcao, jogar))
             {
                 printf("Funcao jogar acionada\n");
+                //Lendo a peça e a posição em que será jogada
+                int linha, coluna, j, cont = 0, k = 0;
+                char jogada[4];
+                for(j = 9; j < 24; j++){
+                    if(comando[j] == '\0' || comando[j] == ' '){
+                        break;
+                    }
+                    jogada[cont] = comando[j];
+                    cont++;
+                }
+                jogada[cont] = '\0';
+                if(cont == 1){
+                    linha = jogada[0] - '0';    //Transformando a linha, de char para int
+                }
+                else{
+                    linha = atoi(jogada);       //Transformando a linha, de string para int
+                }
+                j++;
+                cont = 0;
+                for(k = j; k < 24; k++){
+                    if(comando[k] == '\0' || comando[k] == ' '){
+                        break;
+                    }
+                    jogada[cont] = comando[k];
+                    cont++;
+                }
+                jogada[cont] = '\0';
+                if(cont == 1){
+                    coluna = jogada[0] - '0';   //Transformando a coluna, de char para int
+                }
+                else{
+                    coluna = atoi(jogada);      //Transformando a coluna, de string para int
+                }
+                joga(board, jog, comando[6], comando[7], linha, coluna);    //Chamando a função para jogar
                 aux = 2;
             }
             else if(!strcmp(funcao, passar))
@@ -174,6 +252,40 @@ void leituraComandos(pont board, pontJogadores jog)
             if(!strcmp(funcao, jogar))
             {
                 printf("Funcao jogar acionada\n");
+                //Lendo a peça e a posição em que será jogada
+                int linha, coluna, j, cont = 0, k = 0;
+                char jogada[4];
+                for(j = 9; j < 24; j++){
+                    if(comando[j] == '\0' || comando[j] == ' '){
+                        break;
+                    }
+                    jogada[cont] = comando[j];
+                    cont++;
+                }
+                jogada[cont] = '\0';
+                if(cont == 1){
+                    linha = jogada[0] - '0';    //Transformando a linha, de char para int
+                }
+                else{
+                    linha = atoi(jogada);       //Transformando a linha, de string para int
+                }
+                j++;
+                cont = 0;
+                for(k = j; k < 24; k++){
+                    if(comando[k] == '\0' || comando[k] == ' '){
+                        break;
+                    }
+                    jogada[cont] = comando[k];
+                    cont++;
+                }
+                jogada[cont] = '\0';
+                if(cont == 1){
+                    coluna = jogada[0] - '0';   //Transformando a coluna, de char para int
+                }
+                else{
+                    coluna = atoi(jogada);      //Transformando a coluna, de string para int
+                }
+                joga(board, jog, comando[6], comando[7], linha, coluna);    //Chamando a função para jogar
                 aux = 2;
             }
             else if(!strcmp(funcao, passar))

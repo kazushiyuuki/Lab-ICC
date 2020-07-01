@@ -1,5 +1,5 @@
 1 - Leitura dos comandos e direcionamento para as respectivas funções
-2 - Corrigir função de jogar para se adequar a 1
+2 - Terminar função para jogar
 3 - Implementar função para criar jogadores
 4 - Implementar função de verificação de posição antes de jogar
 5 - Implementar função para contar pontos

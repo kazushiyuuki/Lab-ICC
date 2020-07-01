@@ -12,7 +12,7 @@ int main()
     //printDeque(monte);
     //resetarDeque(monte);
     pont tab = startBoard();
-    //jogar(tab, jog);
+    //joga(tab, jog);
     //printBoard(tab);
     leituraComandos(tab, jog);
     resetBoard(tab);
