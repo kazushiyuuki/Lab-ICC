@@ -3,9 +3,8 @@
 #include<stdlib.h>
 #include<string.h>
 
-pontJogadores iniciarPiecesJog(pontDeque monte)
+void iniciarPiecesJog(pontDeque monte, pontJogadores jog)
 {
-    pontJogadores jog = (pontJogadores)malloc(sizeof(jogadores));
     pontCarta temp;
     for(int i = 0; i < 6; i++)
     {
@@ -17,8 +16,6 @@ pontJogadores iniciarPiecesJog(pontDeque monte)
         free(temp);
     }
     jog->qtdPieces = 6;
-    jog->pontos = 0;
-    return jog;
 }
 
 void trocarPiecesJog(pontDeque monte, pontJogadores jog, int pos)
@@ -627,4 +624,28 @@ int verificaTroca(pontDeque monte, pontJogadores jog, piece pecas[], int qtdPeca
         return 0;
     }
     
+}
+
+pontJogadores iniciarJogs(pontDeque monte, int qtdJogs)
+{
+    int i = 0;
+    pontJogadores jogador, jogAnterior = NULL, inicioJog;
+    while(i < qtdJogs)
+    {
+        jogador = (pontJogadores)malloc(sizeof(jogadores));
+        if(i == 0)
+        {
+          inicioJog = jogador;
+        }
+        if(jogAnterior != NULL)
+        {
+            jogAnterior->proxJog = jogador;
+        }
+        iniciarPiecesJog(monte, jogador);
+        jogador->pontos = 0;
+        jogador->proxJog = NULL;
+        jogAnterior = jogador;
+        i++;
+    }
+    return inicioJog;
 }

@@ -1,16 +1,17 @@
 #include"deck.h"
 
-typedef struct
+typedef struct auxJog
 {
     piece piecesJogador[6];
     int pontos;
     int qtdPieces;
-    char nome[20];
+    char nome[21];
+    struct auxJog * proxJog;
 }jogadores;
 
 typedef jogadores * pontJogadores;
 
-pontJogadores iniciarPiecesJog(pontDeque monte);
+void iniciarPiecesJog(pontDeque monte, pontJogadores jog);
 
 void trocarPiecesJog(pontDeque monte, pontJogadores jog, int pos);
 
@@ -29,3 +30,5 @@ void toUpper(char str[]);
 int verificaPeca(char formato, char cor);
 
 int verificaTroca(pontDeque monte, pontJogadores jog, piece pecas[], int qtdPecasTtroca);
+
+pontJogadores iniciarJogs(pontDeque monte, int qtdJogs);
