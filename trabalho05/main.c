@@ -35,6 +35,7 @@ int main()
             jogAtual = jogAtual->proxJog;
             i++;
         }
+        /*
         while(monte->qtdCartas != 0)
         {
             jogAtual = inicio;
@@ -44,5 +45,12 @@ int main()
                 jogAtual = jogAtual->proxJog;
             }
         }
+        */
+
+        //Apenas para teste
+        jogAtual = inicio;
+        leituraComandos(board, monte, jogAtual);
+        leituraComandos(board, monte, jogAtual->proxJog);
+        controleJogar = 2;
     }
 }
