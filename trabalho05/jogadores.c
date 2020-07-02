@@ -757,7 +757,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
                 funcao[i] = comando[i];
                 i++;
             }
-            funcao[6] = '\0';
+            funcao[i] = '\0';
             if(!strcmp(funcao, trocar))
             {
                 int auxTrocar = i+1;
