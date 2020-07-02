@@ -127,28 +127,224 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
             }
         }
     }
-    board->pieces[linha][coluna].formato = peca; //Volta o char para letra maiuscula
-    board->pieces[linha][coluna].cor = numero;
-    reallocBoard(board, linha, coluna);
     
-    int k = 0;
-    for(i = 0; i < jog->qtdPieces; i++){
-        if(i != pos){
-            jog->piecesJogador[k].formato = jog->piecesJogador[i].formato;
-            jog->piecesJogador[k].cor = jog->piecesJogador[i].cor;
-            k++;
+    int verifica = verificarJogada(board, peca, numero, linha, coluna);
+    if(verifica == 1){
+        board->pieces[linha][coluna].formato = peca; 
+        board->pieces[linha][coluna].cor = numero;
+        reallocBoard(board, linha, coluna);
+        
+        int k = 0;
+        for(i = 0; i < jog->qtdPieces; i++){
+            if(i != pos){
+                jog->piecesJogador[k].formato = jog->piecesJogador[i].formato;
+                jog->piecesJogador[k].cor = jog->piecesJogador[i].cor;
+                k++;
+            }
         }
+        jog->piecesJogador[k].formato = '\0';
+        jog->piecesJogador[k].cor = '\0';
+        jog->qtdPieces--;
+        trocarPiecesJog(monte, jog, jog->qtdPieces);
+        //Remove a peça do deck do jogador depois de jogar
+        pontCarta apagar = monte->fim;
+        free(apagar);
+        monte->qtdCartas--;
     }
-    jog->piecesJogador[k].formato = '\0';
-    jog->piecesJogador[k].cor = '\0';
-    jog->qtdPieces--;
-    trocarPiecesJog(monte, jog, jog->qtdPieces);
-    //Remove a peça do deck do jogador depois de jogar
-    pontCarta apagar = monte->fim;
-    free(apagar);
-    monte->qtdCartas--;
+    else{
+        printf("***Jogada invalida***\n");
+    }
 }
 
+//Função que verifica se a posição em que a peça vai ser jogada é válida ou não
+//Retorna 1 caso seja válida e 0 caso contrário
+//Até agora verifica se as casas adjacentes estão ocupadas e se a peça é da mesma cor ou formato que a sua vizinha
+//Falta limitar a jogada à mesma linha ou coluna após a segunda jogada e verificar se uma linha/coluna já é de uma cor ou formato
+int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
+    int verifica;
+    if(board->columns == 1 && board->rows == 1){
+        verifica = 1;
+    }
+    else{
+        //Limitando as comparações nas bordas do tabuleiro para que o programa não acesse uma posição inexistente
+        if(linha == 0){
+            //Caso em que linha e coluna são iguais a 0
+            if(coluna == 0){
+                if(board->pieces[linha][coluna + 1].formato == ' ' && board->pieces[linha + 1][coluna].formato == ' '){
+                    verifica = 0;
+                }
+                else{
+                    if(peca == board->pieces[linha][coluna + 1].formato || numero == board->pieces[linha][coluna + 1].cor){
+                        verifica = 1; 
+                    } 
+                    else if(peca == board->pieces[linha + 1][coluna].formato || numero == board->pieces[linha + 1][coluna].cor){
+                        verifica = 1;
+                    }
+                    else{
+                        verifica = 0;
+                    }
+                }
+            }
+            //Caso em que linha igual a 0 e coluna no tamanho máximo
+            else if(coluna == board->columns - 1){
+                if(board->pieces[linha][coluna - 1].formato == ' ' && board->pieces[linha + 1][coluna].formato == ' '){
+                    verifica = 0;
+                }
+                else{
+                    if(peca == board->pieces[linha][coluna - 1].formato || numero == board->pieces[linha][coluna - 1].cor){
+                        verifica = 1;
+                    }
+                    else if(peca == board->pieces[linha + 1][coluna].formato || numero == board->pieces[linha + 1][coluna].cor){
+                        verifica = 1;
+                    }
+                    else{
+                        verifica = 0;
+                    }
+                }
+            }
+            //Caso em que apenas linha igual a 0
+            else{
+                if(board->pieces[linha][coluna + 1].formato == ' ' && board->pieces[linha][coluna - 1].formato == ' ' && board->pieces[linha + 1][coluna].formato == ' '){
+                    verifica = 0;
+                }
+                else{
+                    if(peca == board->pieces[linha][coluna + 1].formato || numero == board->pieces[linha][coluna + 1].cor){
+                        verifica = 1; 
+                    } 
+                    else if(peca == board->pieces[linha][coluna - 1].formato || numero == board->pieces[linha][coluna - 1].cor){
+                        verifica = 1;
+                    }
+                    else if(peca == board->pieces[linha + 1][coluna].formato || numero == board->pieces[linha + 1][coluna].cor){
+                        verifica = 1;
+                    }
+                    else{
+                        verifica = 0;
+                    }
+                }
+            }
+        }
+        else if(linha == board->rows - 1){
+            //Caso em que linha igual ao tamanho máximo e coluna igual a 0
+            if(coluna == 0){
+                if(board->pieces[linha][coluna + 1].formato == ' ' && board->pieces[linha - 1][coluna].formato == ' '){
+                    verifica = 0;
+                }
+                else{
+                    if(peca == board->pieces[linha][coluna + 1].formato || numero == board->pieces[linha][coluna + 1].cor){
+                        verifica = 1; 
+                    } 
+                    else if(peca == board->pieces[linha - 1][coluna].formato || numero == board->pieces[linha - 1][coluna].cor){
+                        verifica = 1;
+                    }
+                    else{
+                        verifica = 0;
+                    }
+                }
+            }
+            //Caso em que linha e coluna são iguais ao tamanho máximo
+            else if(coluna == board->columns - 1){
+                if(board->pieces[linha][coluna - 1].formato == ' ' && board->pieces[linha - 1][coluna].formato == ' '){
+                    verifica = 0;
+                }
+                else{
+                    if(peca == board->pieces[linha][coluna - 1].formato || numero == board->pieces[linha][coluna - 1].cor){
+                        verifica = 1;
+                    }
+                    else if(peca == board->pieces[linha - 1][coluna].formato || numero == board->pieces[linha - 1][coluna].cor){
+                        verifica = 1;
+                    }
+                    else{
+                        verifica = 0;
+                    }
+                }
+            }
+            //Caso em que apenas a linha é do tamanho máximo
+            else{
+                if(board->pieces[linha][coluna + 1].formato == ' ' && board->pieces[linha][coluna - 1].formato == ' ' && board->pieces[linha - 1][coluna].formato == ' '){
+                    verifica = 0;
+                }
+                else{
+                    if(peca == board->pieces[linha][coluna + 1].formato || numero == board->pieces[linha][coluna + 1].cor){
+                        verifica = 1; 
+                    } 
+                    else if(peca == board->pieces[linha][coluna - 1].formato || numero == board->pieces[linha][coluna - 1].cor){
+                        verifica = 1;
+                    }
+                    else if(peca == board->pieces[linha - 1][coluna].formato || numero == board->pieces[linha - 1][coluna].cor){
+                        verifica = 1;
+                    }
+                    else{
+                        verifica = 0;
+                    }
+                }
+            }
+        }
+        //Caso em que apenas a coluna é igual a 0
+        else if(coluna == 0){
+            if(board->pieces[linha][coluna + 1].formato == ' ' && board->pieces[linha + 1][coluna].formato == ' ' && board->pieces[linha - 1][coluna].formato == ' '){
+                verifica = 0;
+            }
+            else{
+                if(peca == board->pieces[linha][coluna + 1].formato || numero == board->pieces[linha][coluna + 1].cor){
+                    verifica = 1; 
+                } 
+                else if(peca == board->pieces[linha + 1][coluna].formato || numero == board->pieces[linha + 1][coluna].cor){
+                    verifica = 1;
+                }
+                else if(peca == board->pieces[linha - 1][coluna].formato || numero == board->pieces[linha - 1][coluna].cor){
+                    verifica = 1;
+                }
+                else{
+                    verifica = 0;
+                }
+            }
+        }
+        //Caso em que apenas a coluna é igual ao seu tamanho máximo
+        else if(coluna == board->columns - 1){
+            if(board->pieces[linha][coluna - 1].formato == ' ' && board->pieces[linha + 1][coluna].formato == ' ' && board->pieces[linha - 1][coluna].formato == ' '){
+                verifica = 0;
+            }
+            else{
+                if(peca == board->pieces[linha][coluna - 1].formato || numero == board->pieces[linha][coluna - 1].cor){
+                    verifica = 1;
+                }
+                else if(peca == board->pieces[linha + 1][coluna].formato || numero == board->pieces[linha + 1][coluna].cor){
+                    verifica = 1;
+                }
+                else if(peca == board->pieces[linha - 1][coluna].formato || numero == board->pieces[linha - 1][coluna].cor){
+                    verifica = 1;
+                }
+                else{
+                    verifica = 0;
+                }
+            }
+        }
+        //Caso em que a posição não é em nenhuma borda do tabuleiro
+        else{
+            if(board->pieces[linha][coluna + 1].formato == ' ' && board->pieces[linha][coluna - 1].formato == ' ' && board->pieces[linha + 1][coluna].formato == ' ' && board->pieces[linha - 1][coluna].formato == ' '){
+                verifica = 0;
+            }
+            else{
+                if(peca == board->pieces[linha][coluna + 1].formato || numero == board->pieces[linha][coluna + 1].cor){
+                    verifica = 1; 
+                } 
+                else if(peca == board->pieces[linha][coluna - 1].formato || numero == board->pieces[linha][coluna - 1].cor){
+                    verifica = 1;
+                }
+                else if(peca == board->pieces[linha + 1][coluna].formato || numero == board->pieces[linha + 1][coluna].cor){
+                    verifica = 1;
+                }
+                else if(peca == board->pieces[linha - 1][coluna].formato || numero == board->pieces[linha - 1][coluna].cor){
+                    verifica = 1;
+                }
+                else{
+                    verifica = 0;
+                }
+            }
+        }
+    }
+    return verifica;
+}
 
 //Função recebe o tabuleiro e o ponteiro para o jogador
 //O que faz até o momento: identifica as funções trocar, jogar, passar e comandos inválidos. Aceita também os comandos em maiusculo.

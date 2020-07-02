@@ -18,6 +18,8 @@ void printarJog(pontJogadores jog);
 
 void joga(pont board, pontDeque monte,pontJogadores jog, char peca, char numero, int linha, int coluna);
 
+int verificarJogada(pont board, char peca, char numero, int linha, int coluna);
+
 void leituraComandos(pont board, pontDeque monte, pontJogadores jog);
 
 void fgetss(char str[], int n, char tipoComando[]);

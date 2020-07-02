@@ -1,7 +1,6 @@
 1 - Leitura dos comandos e direcionamento para as respectivas funções
-2 - Terminar função para jogar
-3 - Implementar função para criar jogadores
-4 - Implementar função de verificação de posição antes de jogar
-5 - Implementar função para contar pontos
-6 - Implementar cheat mode
-7 - Unir tudo na main.c 
+2 - Implementar função para criar jogadores
+3 - Terminar função de verificação de posição antes de jogar
+4 - Implementar função para contar pontos
+5 - Implementar cheat mode
+6 - Unir tudo na main.c 
