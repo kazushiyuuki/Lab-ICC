@@ -90,8 +90,15 @@ void resetBoard(pont board)
 void printBoard(pont board)
 {
     char formato, cor;
+    printf("  ");
+    for(int k = 0; k < board->columns; k++)
+    {
+        printf(" %d   ", k);
+    }
+    printf("\n");
     for(int i=0; i<board->rows; i++)
     {
+        printf("%d ", i);
         for(int j=0; j<board->columns; j++)
         {
             formato = board->pieces[i][j].formato;
