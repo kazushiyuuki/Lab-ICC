@@ -17,9 +17,9 @@ void trocarPiecesJog(pontDeque monte, pontJogadores jog, int pos);
 
 void printarJog(pontJogadores jog);
 
-void joga(pont board, pontDeque monte,pontJogadores jog, char peca, char numero, int linha, int coluna);
+void joga(pont board, pontDeque monte,pontJogadores jog, char peca, char numero, int linha, int coluna, int *n_jogada, int *todasJogadas);
 
-int verificarJogada(pont board, char peca, char numero, int linha, int coluna);
+int verificarJogada(pont board, char peca, char numero, int linha, int coluna, int *n_jogada, int *todasJogadas);
 
 void leituraComandos(pont board, pontDeque monte, pontJogadores jog);
 

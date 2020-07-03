@@ -45,7 +45,7 @@ void printarJog(pontJogadores jog)
     printf("\n");
 }
 
-void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero, int linha, int coluna)
+void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero, int linha, int coluna, int *n_jogada, int *todasJogadas)
 {  
     int i, aux = 0, pos;
     if(linha >= board->rows || coluna >= board->columns || linha < 0 || coluna < 0 || board->pieces[linha][coluna].cor != ' ' || board->pieces[linha][coluna].formato != ' '){
@@ -65,12 +65,12 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
             }
         }
     }    
-    int verifica = verificarJogada(board, peca, numero, linha, coluna);
+    int verifica = verificarJogada(board, peca, numero, linha, coluna, n_jogada, todasJogadas);
     if(aux == 0 && verifica == 1){
         board->pieces[linha][coluna].formato = peca; 
         board->pieces[linha][coluna].cor = numero;
         reallocBoard(board, linha, coluna);
-        
+            
         int k = 0;
         for(i = 0; i < jog->qtdPieces; i++){
             if(i != pos){
@@ -87,6 +87,8 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
         pontCarta apagar = monte->fim;
         free(apagar);
         monte->qtdCartas--;
+        //Aumenta o número da jogada
+        (*n_jogada)++;
     }
     else{
         printf("***Jogada invalida***\n");
@@ -95,9 +97,9 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
 
 //Função que verifica se a posição em que a peça vai ser jogada é válida ou não
 //Retorna 1 caso seja válida e 0 caso contrário
-//Até agora verifica se as casas adjacentes estão ocupadas, se a peça é da mesma cor ou formato que a sua vizinha e se uma linha/coluna já é de uma cor ou formato
-//Falta limitar a jogada à mesma linha ou coluna após a segunda jogada 
-int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
+//Verifica se as casas adjacentes estão ocupadas, se a peça é da mesma cor ou formato que a sua vizinha, se uma linha/coluna já é de uma cor ou formato
+// e limita a jogada à mesma linha ou coluna a partir da segunda jogada 
+int verificarJogada(pont board, char peca, char numero, int linha, int coluna, int *n_jogada, int *todasJogadas){
     int verifica = 1;   //Variável a ser retornada
     int posAdj = -1;    //Vetor que indica qual a posição das peças adjacentes em relação à peça jogada (0 = acima, 1 = esquerda, 2 = direita, 3 = abaixo)
     int pecaIgual = -1;     //Variável que indica se o formato ou a cor são iguais à peça adjacente (1 = formato, 2 = cor)
@@ -632,7 +634,7 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
         }
     }
     
-    int i, aux_linha, aux_coluna;
+    int aux_linha, aux_coluna;
     if(verifica == 1){
         if(posAdj == 0){
             aux_linha = linha - 2;
@@ -743,7 +745,41 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
             }
         }
     }
-    
+    if(verifica == 1){
+        int tam = (*n_jogada) * 2, tam_aux = ((*n_jogada) - 1) * 2, i;
+        if((*n_jogada) > 1){
+            //Copiando vetor de jogadas e aumentando seu tamanho
+            int auxJogadas[tam_aux];
+            for(i = 0; i < tam_aux; i++){
+                if(todasJogadas[i] == 0){
+                    auxJogadas[i] = 1;
+                }
+                else{
+                    auxJogadas[i] = todasJogadas[i];
+                }
+            }
+            todasJogadas = (int *)realloc(todasJogadas, tam * sizeof(int));
+            for(i = 0; i < tam_aux; i++){
+                todasJogadas[i] = auxJogadas[i];
+            }
+            //Limitando a nova jogada à mesma linha ou coluna das jogadas anteriores
+            if((*n_jogada) > 2){
+                if(todasJogadas[0] == todasJogadas[2]){
+                    if(linha != todasJogadas[2]){
+                        verifica = 0;
+                    }
+                }
+                else if(todasJogadas[1] == todasJogadas[3]){
+                    if(coluna != todasJogadas[3]){
+                        verifica = 0;
+                    }
+                }
+            }
+        }
+        //Acresecentando a nova jogada ao vetor
+        todasJogadas[tam - 2] = linha;
+        todasJogadas[tam - 1] = coluna;
+    }
     return verifica;
 }
 
@@ -757,11 +793,14 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
     char jogar[] = "JOGAR";
     char passar[] = "PASSAR";
 
-    int aux = 0;
+    int aux = 0, num_jogada = 1, *n_jogada;
+    n_jogada = &num_jogada;     //Ponteiro que aponta para a variável que armazena o número da jogada atual do jogador
+    int *todasJogadas = (int *)malloc(2 * sizeof(int)); //Vetor que armazena as posições das jogadas do jogador
     while(aux != -1)
     {   
         if(aux == 0 || jog->qtdPieces == 0){
             jog->qtdPieces = 6;     //Setando a quantidade de peças iniciais somente em cada nova jogada
+            *n_jogada = 1;          //Setando uma nova jogada 
         }
         printBoard(board);
         printf("===========\n");
@@ -844,7 +883,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
                 else{
                     coluna = atoi(jogada);      //Transformando a coluna, de string para int
                 }
-                joga(board, monte, jog, comando[6], comando[7], linha, coluna);    //Chamando a função para jogar
+                joga(board, monte, jog, comando[6], comando[7], linha, coluna, n_jogada, todasJogadas);    //Chamando a função para jogar
                 aux = 2;
             }
             else if(!strcmp(funcao, passar))
@@ -858,7 +897,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
             }
         }
         else if(aux == 2 && jog->qtdPieces != 0)
-        {
+        {   
             printf("Opcoes: jogar p1 x y | passar\n");
             fgetss(comando, 24, "Comando");
             toUpper(comando);
@@ -904,7 +943,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
                 else{
                     coluna = atoi(jogada);      //Transformando a coluna, de string para int
                 }
-                joga(board, monte ,jog, comando[6], comando[7], linha, coluna);    //Chamando a função para jogar
+                joga(board, monte ,jog, comando[6], comando[7], linha, coluna, n_jogada, todasJogadas);    //Chamando a função para jogar
                 aux = 2;
             }
             else if(!strcmp(funcao, passar))
@@ -918,6 +957,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
             }
         }
     }
+    free(todasJogadas);
 }
 
 //Função para leitura de string que não tem problema de buffer e não dá segfault se passar do limite
