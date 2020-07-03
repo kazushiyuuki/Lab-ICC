@@ -64,69 +64,9 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
                 aux = 1;
             }
         }
-    }
-    char jogada[11];
-    while(aux != 0){
-        printf("***Jogada invalida***\n");
-        printf("Jogue novamente: p1 x y\n");
-        fgetss(jogada, 11, "jogada");
-        toUpper(jogada);
-        peca = jogada[0];
-        numero = jogada[1];
-        int j, cont = 0, k = 0;
-        char posicao[4];
-        for(j = 3; j < 11; j++){
-            if(jogada[j] == '\0' || jogada[j] == ' '){
-                break;
-            }
-            posicao[cont] = jogada[j];
-            cont++;
-        }
-        posicao[cont] = '\0';
-        if(cont == 1){
-            linha = posicao[0] - '0';    //Transformando a linha, de char para int
-        }
-        else{
-            linha = atoi(posicao);       //Transformando a linha, de string para int
-        }
-        j++;
-        cont = 0;
-        for(k = j; k < 11; k++){
-            if(jogada[k] == '\0' || jogada[k] == ' '){
-                break;
-            }
-            posicao[cont] = jogada[k];
-            cont++;
-        }
-        posicao[cont] = '\0';
-        if(cont == 1){
-            coluna = posicao[0] - '0';   //Transformando a coluna, de char para int
-        }
-        else{
-            coluna = atoi(posicao);      //Transformando a coluna, de string para int
-        }
-    
-        if(linha >= board->rows || coluna >= board->columns || linha < 0 || coluna < 0 || board->pieces[linha][coluna].cor != ' ' || board->pieces[linha][coluna].formato != ' '){
-            aux = 1;
-        }
-        else{
-            for(i = 0; i < jog->qtdPieces; i++)
-            {
-                if(peca == jog->piecesJogador[i].formato && numero == jog->piecesJogador[i].cor)
-                {
-                    aux = 0;
-                    pos = i;
-                    break;
-                }
-                else{
-                    aux = 1;
-                }
-            }
-        }
-    }
-    
+    }    
     int verifica = verificarJogada(board, peca, numero, linha, coluna);
-    if(verifica == 1){
+    if(aux == 0 && verifica == 1){
         board->pieces[linha][coluna].formato = peca; 
         board->pieces[linha][coluna].cor = numero;
         reallocBoard(board, linha, coluna);
@@ -158,13 +98,11 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
 //Até agora verifica se as casas adjacentes estão ocupadas, se a peça é da mesma cor ou formato que a sua vizinha e se uma linha/coluna já é de uma cor ou formato
 //Falta limitar a jogada à mesma linha ou coluna após a segunda jogada 
 int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
-    int verifica;   //Variável a ser retornada
-    int posAdj = -1;    //Variável que indica qual a posição da peça adjacente em relação à peça jogada (0 = acima, 1 = esquerda, 2 = direita, 3 = abaixo)
+    int verifica = 1;   //Variável a ser retornada
+    int posAdj = -1;    //Vetor que indica qual a posição das peças adjacentes em relação à peça jogada (0 = acima, 1 = esquerda, 2 = direita, 3 = abaixo)
     int pecaIgual = -1;     //Variável que indica se o formato ou a cor são iguais à peça adjacente (1 = formato, 2 = cor)
-    if(board->columns == 1 && board->rows == 1){
-        verifica = 1;
-    }
-    else{
+    
+    if(board->columns != 1 && board->rows != 1){
         //Limitando as comparações nas bordas do tabuleiro para que o programa não acesse uma posição inexistente
         if(linha == 0){
             //Caso em que linha e coluna são iguais a 0
@@ -175,23 +113,41 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
                 else{
                     //Verificando se o formato e a cor da peça é igual à sua vizinha
                     //Caso seja, a jogada é inválida
-                    if(peca == board->pieces[linha][coluna + 1].formato){
-                        if(numero == board->pieces[linha][coluna + 1].cor){
-                            verifica = 0;
+                    if(board->pieces[linha][coluna + 1].formato != ' '){
+                        if(peca == board->pieces[linha][coluna + 1].formato){
+                            if(numero == board->pieces[linha][coluna + 1].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 2;
+                                pecaIgual = 1;
+                            }
+                        }
+                        else if(numero == board->pieces[linha][coluna + 1].cor){
+                            posAdj = 2;
+                            pecaIgual = 2;
                         }
                         else{
-                            verifica = 1;
-                            posAdj = 2;
-                            pecaIgual = 1;
+                            verifica = 0;
                         }
                     }
-                    else if(numero == board->pieces[linha][coluna + 1].cor){
-                        verifica = 1;
-                        posAdj = 2;
-                        pecaIgual = 2;
-                    }
-                    else{
-                        verifica = 0;
+                    if(board->pieces[linha + 1][coluna].formato != ' '){
+                        if(peca == board->pieces[linha + 1][coluna].formato){
+                            if(numero == board->pieces[linha + 1][coluna].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 3;
+                                pecaIgual = 1;
+                            }
+                        }
+                        else if(numero == board->pieces[linha + 1][coluna].cor){
+                            posAdj = 3;
+                            pecaIgual = 2;
+                        }
+                        else{
+                            verifica = 0;
+                        }
                     }
                 }
             }
@@ -203,38 +159,41 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
                 else{
                     //Verificando se o formato e a cor da peça é igual à sua vizinha
                     //Caso seja, a jogada é inválida
-                    if(peca == board->pieces[linha][coluna - 1].formato){
-                        if(numero == board->pieces[linha][coluna - 1].cor){
-                            verifica = 0;
+                    if(board->pieces[linha][coluna - 1].formato != ' '){
+                        if(peca == board->pieces[linha][coluna - 1].formato){
+                            if(numero == board->pieces[linha][coluna - 1].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 1;
+                                pecaIgual = 1;
+                            }
                         }
-                        else{
-                            verifica = 1;
+                        else if(numero == board->pieces[linha][coluna - 1].cor){
                             posAdj = 1;
-                            pecaIgual = 1;
-                        }
-                    }
-                    else if(numero == board->pieces[linha][coluna - 1].cor){
-                        verifica = 1;
-                        posAdj = 1;
-                        pecaIgual = 2;
-                    }
-                    else if(peca == board->pieces[linha + 1][coluna].formato){
-                        if(numero == board->pieces[linha + 1][coluna].cor){
-                            verifica = 0;
+                            pecaIgual = 2;
                         }
                         else{
-                            verifica = 1;
-                            posAdj = 3;
-                            pecaIgual = 1;
+                            verifica = 0;
                         }
                     }
-                    else if(numero == board->pieces[linha + 1][coluna].cor){
-                        verifica = 1;
-                        posAdj = 3;
-                        pecaIgual = 2;
-                    }
-                    else{
-                        verifica = 0;
+                    if(board->pieces[linha + 1][coluna].formato != ' '){
+                        if(peca == board->pieces[linha + 1][coluna].formato){
+                            if(numero == board->pieces[linha + 1][coluna].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 3;
+                                pecaIgual = 1;
+                            }
+                        }
+                        else if(numero == board->pieces[linha + 1][coluna].cor){
+                            posAdj = 3;
+                            pecaIgual = 2;
+                        }
+                        else{
+                            verifica = 0;
+                        }
                     }
                 }
             }
@@ -246,53 +205,59 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
                 else{
                     //Verificando se o formato e a cor da peça é igual à sua vizinha
                     //Caso seja, a jogada é inválida
-                    if(peca == board->pieces[linha][coluna + 1].formato){
-                        if(numero == board->pieces[linha][coluna + 1].cor){
-                            verifica = 0;
+                    if(board->pieces[linha][coluna + 1].formato != ' '){
+                        if(peca == board->pieces[linha][coluna + 1].formato){
+                            if(numero == board->pieces[linha][coluna + 1].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 2;
+                                pecaIgual = 1;
+                            }
                         }
-                        else{
-                            verifica = 1;
+                        else if(numero == board->pieces[linha][coluna + 1].cor){ 
                             posAdj = 2;
-                            pecaIgual = 1;
-                        }
-                    }
-                    else if(numero == board->pieces[linha][coluna + 1].cor){
-                        verifica = 1; 
-                        posAdj = 2;
-                        pecaIgual = 2;
-                    } 
-                    else if(peca == board->pieces[linha][coluna - 1].formato){
-                        if(numero == board->pieces[linha][coluna - 1].cor){
+                            pecaIgual = 2;
+                        }     
+                        else{
                             verifica = 0;
                         }
-                        else{
-                            verifica = 1;
+                    }
+                    if(board->pieces[linha][coluna - 1].formato != ' '){
+                        if(peca == board->pieces[linha][coluna - 1].formato){
+                            if(numero == board->pieces[linha][coluna - 1].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 1;
+                                pecaIgual = 1;
+                            }
+                        }
+                        else if(numero == board->pieces[linha][coluna - 1].cor){
                             posAdj = 1;
-                            pecaIgual = 1;
-                        }
-                    }
-                    else if(numero == board->pieces[linha][coluna - 1].cor){
-                        verifica = 1;
-                        posAdj = 1;
-                        pecaIgual = 2;
-                    }
-                    else if(peca == board->pieces[linha + 1][coluna].formato){
-                        if(numero == board->pieces[linha + 1][coluna].cor){
-                            verifica = 0;
+                            pecaIgual = 2;
                         }
                         else{
-                            verifica = 1;
-                            posAdj = 3;
-                            pecaIgual = 1;
+                            verifica = 0;
                         }
                     }
-                    else if(numero == board->pieces[linha + 1][coluna].cor){
-                        verifica = 1;
-                        posAdj = 3;
-                        pecaIgual = 2;
-                    }
-                    else{
-                        verifica = 0;
+                    if(board->pieces[linha + 1][coluna].formato != ' '){
+                        if(peca == board->pieces[linha + 1][coluna].formato){
+                            if(numero == board->pieces[linha + 1][coluna].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 3;
+                                pecaIgual = 1;
+                            }
+                        }
+                        else if(numero == board->pieces[linha + 1][coluna].cor){
+                            posAdj = 3;
+                            pecaIgual = 2;
+                        }
+                        else{
+                            verifica = 0;
+                        }
                     }
                 }
             }
@@ -304,40 +269,43 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
                     verifica = 0;
                 }
                 else{
-                    //Verificando se o formato e a cor da peça é igual à sua vizinha
+                    //Verificando se o formato e a cor da peça é igual às suas vizinhas
                     //Caso seja, a jogada é inválida
-                    if(peca == board->pieces[linha][coluna + 1].formato){
-                        if(numero == board->pieces[linha][coluna + 1].cor){
-                            verifica = 0;
+                    if(board->pieces[linha][coluna + 1].formato != ' '){
+                        if(peca == board->pieces[linha][coluna + 1].formato){
+                            if(numero == board->pieces[linha][coluna + 1].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 2;
+                                pecaIgual = 1;
+                            }
                         }
-                        else{
-                            verifica = 1;
+                        else if(numero == board->pieces[linha][coluna + 1].cor){ 
                             posAdj = 2;
-                            pecaIgual = 1;
+                            pecaIgual = 2;
+                        } 
+                        else{
+                            verifica = 0; 
                         }
                     }
-                    else if(numero == board->pieces[linha][coluna + 1].cor){
-                        verifica = 1; 
-                        posAdj = 2;
-                        pecaIgual = 2;
-                    } 
-                    else if(peca == board->pieces[linha - 1][coluna].formato){
-                        if(numero == board->pieces[linha - 1][coluna].cor){
-                            verifica = 0;
+                    if(board->pieces[linha - 1][coluna].formato != ' '){
+                        if(peca == board->pieces[linha - 1][coluna].formato){
+                            if(numero == board->pieces[linha - 1][coluna].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 0;
+                                pecaIgual = 1;
+                            }
+                        }
+                        else if(numero == board->pieces[linha - 1][coluna].cor){
+                            posAdj = 0;
+                            pecaIgual = 2;
                         }
                         else{
-                            verifica = 1;
-                            posAdj = 0;
-                            pecaIgual = 1;
+                            verifica = 0;
                         }
-                    }
-                    else if(numero == board->pieces[linha - 1][coluna].cor){
-                        verifica = 1;
-                        posAdj = 0;
-                        pecaIgual = 2;
-                    }
-                    else{
-                        verifica = 0;
                     }
                 }
             }
@@ -349,38 +317,41 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
                 else{
                     //Verificando se o formato e a cor da peça é igual à sua vizinha
                     //Caso seja, a jogada é inválida
-                    if(peca == board->pieces[linha][coluna - 1].formato){
-                        if(numero == board->pieces[linha][coluna - 1].cor){
-                            verifica = 0;
+                    if(board->pieces[linha][coluna - 1].formato != ' '){
+                        if(peca == board->pieces[linha][coluna - 1].formato){
+                            if(numero == board->pieces[linha][coluna - 1].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 1;
+                                pecaIgual = 1;
+                            }
                         }
-                        else{
-                            verifica = 1;
+                        else if(numero == board->pieces[linha][coluna - 1].cor){
                             posAdj = 1;
-                            pecaIgual = 1;
-                        }
-                    }
-                    else if(numero == board->pieces[linha][coluna - 1].cor){
-                        verifica = 1;
-                        posAdj = 1;
-                        pecaIgual = 2;
-                    }
-                    else if(peca == board->pieces[linha - 1][coluna].formato){
-                        if(numero == board->pieces[linha - 1][coluna].cor){
-                            verifica = 0;
+                            pecaIgual = 2;
                         }
                         else{
-                            verifica = 1;
-                            posAdj = 0;
-                            pecaIgual = 1;
+                            verifica = 0;
                         }
                     }
-                    else if(numero == board->pieces[linha - 1][coluna].cor){
-                        verifica = 1;
-                        posAdj = 0;
-                        pecaIgual = 2;
-                    }
-                    else{
-                        verifica = 0;
+                    if(board->pieces[linha - 1][coluna].formato != ' '){
+                        if(peca == board->pieces[linha - 1][coluna].formato){
+                            if(numero == board->pieces[linha - 1][coluna].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 0;
+                                pecaIgual = 1;
+                            }
+                        }
+                        else if(numero == board->pieces[linha - 1][coluna].cor){
+                            posAdj = 0;
+                            pecaIgual = 2;
+                        }
+                        else{
+                            verifica = 0;
+                        }
                     }
                 }
             }
@@ -392,53 +363,59 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
                 else{
                     //Verificando se o formato e a cor da peça é igual à sua vizinha
                     //Caso seja, a jogada é inválida
-                    if(peca == board->pieces[linha][coluna + 1].formato){
-                        if(numero == board->pieces[linha][coluna + 1].cor){
-                            verifica = 0;
+                    if(board->pieces[linha][coluna + 1].formato != ' '){
+                        if(peca == board->pieces[linha][coluna + 1].formato){
+                            if(numero == board->pieces[linha][coluna + 1].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 2;
+                                pecaIgual = 1;
+                            }
                         }
-                        else{
-                            verifica = 1;
+                        else if(numero == board->pieces[linha][coluna + 1].cor){ 
                             posAdj = 2;
-                            pecaIgual = 1;
-                        }
-                    }
-                    else if(numero == board->pieces[linha][coluna + 1].cor){
-                        verifica = 1; 
-                        posAdj = 2;
-                        pecaIgual = 2;
-                    } 
-                    else if(peca == board->pieces[linha][coluna - 1].formato){
-                        if(numero == board->pieces[linha][coluna - 1].cor){
+                            pecaIgual = 2;
+                        } 
+                        else{
                             verifica = 0;
                         }
-                        else{
-                            verifica = 1;
+                    }
+                    if(board->pieces[linha][coluna - 1].formato != ' '){
+                        if(peca == board->pieces[linha][coluna - 1].formato){
+                            if(numero == board->pieces[linha][coluna - 1].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 1;
+                                pecaIgual = 1;
+                            }
+                        }
+                        else if(numero == board->pieces[linha][coluna - 1].cor){
                             posAdj = 1;
-                            pecaIgual = 1;
-                        }
-                    }
-                    else if(numero == board->pieces[linha][coluna - 1].cor){
-                        verifica = 1;
-                        posAdj = 1;
-                        pecaIgual = 2;
-                    }
-                    else if(peca == board->pieces[linha - 1][coluna].formato){
-                        if(numero == board->pieces[linha - 1][coluna].cor){
-                            verifica = 0;
+                            pecaIgual = 2;
                         }
                         else{
-                            verifica = 1;
-                            posAdj = 0;
-                            pecaIgual = 1;
+                            verifica = 0;
                         }
                     }
-                    else if(numero == board->pieces[linha - 1][coluna].cor){
-                        verifica = 1;
-                        posAdj = 0;
-                        pecaIgual = 2;
-                    }
-                    else{
-                        verifica = 0;
+                    if(board->pieces[linha - 1][coluna].formato != ' '){
+                        if(peca == board->pieces[linha - 1][coluna].formato){
+                            if(numero == board->pieces[linha - 1][coluna].cor){
+                                verifica = 0;
+                            }
+                            else{
+                                posAdj = 0;
+                                pecaIgual = 1;
+                            }
+                        }
+                        else if(numero == board->pieces[linha - 1][coluna].cor){
+                            posAdj = 0;
+                            pecaIgual = 2;
+                        }
+                        else{
+                            verifica = 0;
+                        }
                     }
                 }
             }
@@ -451,53 +428,59 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
             else{
                 //Verificando se o formato e a cor da peça é igual à sua vizinha
                 //Caso seja, a jogada é inválida
-                if(peca == board->pieces[linha][coluna + 1].formato){
-                    if(numero == board->pieces[linha][coluna + 1].cor){
-                        verifica = 0;
+                if(board->pieces[linha][coluna + 1].formato != ' '){
+                    if(peca == board->pieces[linha][coluna + 1].formato){
+                        if(numero == board->pieces[linha][coluna + 1].cor){
+                            verifica = 0;
+                        }
+                        else{
+                            posAdj = 2;
+                            pecaIgual = 1;
+                        }
                     }
-                    else{
-                        verifica = 1;
+                    else if(numero == board->pieces[linha][coluna + 1].cor){
                         posAdj = 2;
-                        pecaIgual = 1;
-                    }
-                }
-                else if(numero == board->pieces[linha][coluna + 1].cor){
-                    verifica = 1; 
-                    posAdj = 2;
-                    pecaIgual = 2;
-                } 
-                else if(peca == board->pieces[linha + 1][coluna].formato){
-                    if(numero == board->pieces[linha + 1][coluna].cor){
+                        pecaIgual = 2;
+                    } 
+                    else{
                         verifica = 0;
                     }
-                    else{
-                        verifica = 1;
+                }
+                if(board->pieces[linha + 1][coluna].formato != ' '){
+                    if(peca == board->pieces[linha + 1][coluna].formato){
+                        if(numero == board->pieces[linha + 1][coluna].cor){
+                            verifica = 0;
+                        }
+                        else{
+                            posAdj = 3;
+                            pecaIgual = 1;
+                        }
+                    }
+                    else if(numero == board->pieces[linha + 1][coluna].cor){
                         posAdj = 3;
-                        pecaIgual = 1;
-                    }
-                }
-                else if(numero == board->pieces[linha + 1][coluna].cor){
-                    verifica = 1;
-                    posAdj = 3;
-                    pecaIgual = 2;
-                }
-                else if(peca == board->pieces[linha - 1][coluna].formato){
-                    if(numero == board->pieces[linha - 1][coluna].cor){
-                        verifica = 0;
+                        pecaIgual = 2;
                     }
                     else{
-                        verifica = 1;
-                        posAdj = 0;
-                        pecaIgual = 1;
+                        verifica = 0;
                     }
                 }
-                else if(numero == board->pieces[linha - 1][coluna].cor){
-                    verifica = 1;
-                    posAdj = 0;
-                    pecaIgual = 2;
-                }
-                else{
-                    verifica = 0;
+                if(board->pieces[linha - 1][coluna].formato != ' '){
+                    if(peca == board->pieces[linha - 1][coluna].formato){
+                        if(numero == board->pieces[linha - 1][coluna].cor){
+                            verifica = 0;
+                        }
+                        else{
+                            posAdj = 0;
+                            pecaIgual = 1;
+                        }
+                    }
+                    else if(numero == board->pieces[linha - 1][coluna].cor){
+                        posAdj = 0;
+                        pecaIgual = 2;
+                    }
+                    else{
+                        verifica = 0;
+                    }
                 }
             }
         }
@@ -509,53 +492,59 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
             else{
                 //Verificando se o formato e a cor da peça é igual à sua vizinha
                 //Caso seja, a jogada é inválida
-                if(peca == board->pieces[linha][coluna - 1].formato){
-                    if(numero == board->pieces[linha][coluna - 1].cor){
-                        verifica = 0;
+                if(board->pieces[linha][coluna - 1].formato != ' '){
+                    if(peca == board->pieces[linha][coluna - 1].formato){
+                        if(numero == board->pieces[linha][coluna - 1].cor){
+                            verifica = 0;
+                        }
+                        else{
+                            posAdj = 1;
+                            pecaIgual = 1;
+                        }
                     }
-                    else{
-                        verifica = 1;
+                    else if(numero == board->pieces[linha][coluna - 1].cor){
                         posAdj = 1;
-                        pecaIgual = 1;
-                    }
-                }
-                else if(numero == board->pieces[linha][coluna - 1].cor){
-                    verifica = 1;
-                    posAdj = 1;
-                    pecaIgual = 2;
-                }
-                else if(peca == board->pieces[linha + 1][coluna].formato){
-                    if(numero == board->pieces[linha + 1][coluna].cor){
-                        verifica = 0;
+                        pecaIgual = 2;
                     }
                     else{
-                        verifica = 1;
+                        verifica = 0;
+                    }
+                }
+                if(board->pieces[linha + 1][coluna].formato != ' '){
+                    if(peca == board->pieces[linha + 1][coluna].formato){
+                        if(numero == board->pieces[linha + 1][coluna].cor){
+                            verifica = 0;
+                        }
+                        else{
+                            posAdj = 3;
+                            pecaIgual = 1;
+                        }
+                    }   
+                    else if(numero == board->pieces[linha + 1][coluna].cor){
                         posAdj = 3;
-                        pecaIgual = 1;
-                    }
-                }   
-                else if(numero == board->pieces[linha + 1][coluna].cor){
-                    verifica = 1;
-                    posAdj = 3;
-                    pecaIgual = 2;
-                }
-                else if(peca == board->pieces[linha - 1][coluna].formato){
-                    if(numero == board->pieces[linha - 1][coluna].cor){
-                        verifica = 0;
+                        pecaIgual = 2;
                     }
                     else{
-                        verifica = 1;
-                        posAdj = 0;
-                        pecaIgual = 1;
+                        verifica = 0;
                     }
                 }
-                else if(numero == board->pieces[linha - 1][coluna].cor){
-                    verifica = 1;
-                    posAdj = 0;
-                    pecaIgual = 2;
-                }
-                else{
-                    verifica = 0;
+                if(board->pieces[linha - 1][coluna].formato != ' '){
+                    if(peca == board->pieces[linha - 1][coluna].formato){
+                        if(numero == board->pieces[linha - 1][coluna].cor){
+                            verifica = 0;
+                        }
+                        else{
+                            posAdj = 0;
+                            pecaIgual = 1;
+                        }
+                    }
+                    else if(numero == board->pieces[linha - 1][coluna].cor){
+                        posAdj = 0;
+                        pecaIgual = 2;
+                    }
+                    else{
+                        verifica = 0;
+                    }
                 }
             }
         }
@@ -567,82 +556,94 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
             else{
                 //Verificando se o formato e a cor da peça é igual à sua vizinha
                 //Caso seja, a jogada é inválida
-                if(peca == board->pieces[linha][coluna + 1].formato){
-                    if(numero == board->pieces[linha][coluna + 1].cor){
-                        verifica = 0;
+                if(board->pieces[linha][coluna + 1].formato != ' '){
+                    if(peca == board->pieces[linha][coluna + 1].formato){
+                        if(numero == board->pieces[linha][coluna + 1].cor){
+                            verifica = 0;
+                        }
+                        else{
+                            posAdj = 2;
+                            pecaIgual = 1;
+                        }
                     }
-                    else{
-                        verifica = 1; 
+                    else if(numero == board->pieces[linha][coluna + 1].cor){
                         posAdj = 2;
-                        pecaIgual = 1;
-                    }
-                }
-                else if(numero == board->pieces[linha][coluna + 1].cor){
-                    verifica = 1; 
-                    posAdj = 2;
-                    pecaIgual = 2;
-                } 
-                else if(peca == board->pieces[linha][coluna - 1].formato){
-                    if(numero == board->pieces[linha][coluna - 1].cor){
-                        verifica = 0;
+                        pecaIgual = 2;
                     }
                     else{
-                        verifica = 1;
+                        verifica = 0;
+                    } 
+                }
+                if(board->pieces[linha][coluna - 1].formato != ' '){
+                    if(peca == board->pieces[linha][coluna - 1].formato){
+                        if(numero == board->pieces[linha][coluna - 1].cor){
+                            verifica = 0;
+                        }
+                        else{
+                            posAdj = 1;
+                            pecaIgual = 1;
+                        }
+                    }
+                    else if(numero == board->pieces[linha][coluna - 1].cor){
                         posAdj = 1;
-                        pecaIgual = 1;
-                    }
-                }
-                else if(numero == board->pieces[linha][coluna - 1].cor){
-                    verifica = 1;
-                    posAdj = 1;
-                    pecaIgual = 2;
-                }
-                else if(peca == board->pieces[linha + 1][coluna].formato){
-                    if(numero == board->pieces[linha + 1][coluna].cor){
-                        verifica = 0;
+                        pecaIgual = 2;
                     }
                     else{
-                        verifica = 1;
+                        verifica = 0;
+                    }
+                }
+                if(board->pieces[linha + 1][coluna].formato != ' '){
+                    if(peca == board->pieces[linha + 1][coluna].formato){
+                        if(numero == board->pieces[linha + 1][coluna].cor){
+                            verifica = 0;
+                        }
+                        else{
+                            posAdj = 3;
+                            pecaIgual = 1;
+                        }
+                    }
+                    else if(numero == board->pieces[linha + 1][coluna].cor){
                         posAdj = 3;
-                        pecaIgual = 1;
-                    }
-                }
-                else if(numero == board->pieces[linha + 1][coluna].cor){
-                    verifica = 1;
-                    posAdj = 3;
-                    pecaIgual = 2;
-                }
-                else if(peca == board->pieces[linha - 1][coluna].formato){
-                    if(numero == board->pieces[linha - 1][coluna].cor){
-                        verifica = 0;
+                        pecaIgual = 2;
                     }
                     else{
-                        verifica = 1; 
-                        posAdj = 0;
-                        pecaIgual = 1;
+                        verifica = 0;
                     }
                 }
-                else if(numero == board->pieces[linha - 1][coluna].cor){
-                    verifica = 1;
-                    posAdj = 0;
-                    pecaIgual = 2;
-                }
-                else{
-                    verifica = 0;
+                if(board->pieces[linha - 1][coluna].formato != ' '){
+                    if(peca == board->pieces[linha - 1][coluna].formato){
+                        if(numero == board->pieces[linha - 1][coluna].cor){
+                            verifica = 0;
+                        }
+                        else{
+                            posAdj = 0;
+                            pecaIgual = 1;
+                        }
+                    }
+                    else if(numero == board->pieces[linha - 1][coluna].cor){
+                        posAdj = 0;
+                        pecaIgual = 2;
+                    }
+                    else{
+                        verifica = 0;
+                    }
                 }
             }
         }
     }
-
+    
     int i, aux_linha, aux_coluna;
     if(verifica == 1){
         if(posAdj == 0){
-            i = 0;
             aux_linha = linha - 2;
             aux_coluna = coluna;
-            while(aux_linha >= 1 || board->pieces[aux_linha][aux_coluna].formato != ' ' || board->pieces[aux_linha][aux_coluna].cor != ' '){
+            while(aux_linha > 0 && board->pieces[aux_linha][aux_coluna].formato != ' ' && board->pieces[aux_linha][aux_coluna].cor != ' '){
                 if(pecaIgual == 1){
                     if(board->pieces[aux_linha][aux_coluna].formato != peca){
+                        verifica = 0;
+                        break;
+                    }
+                    else if(board->pieces[aux_linha][aux_coluna].cor == numero){
                         verifica = 0;
                         break;
                     }
@@ -652,18 +653,24 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
                         verifica = 0;
                         break;
                     }
+                    else if(board->pieces[aux_linha][aux_coluna].formato == peca){
+                        verifica = 0;
+                        break;
+                    }
                 }
-                i++;
-                aux_linha = aux_linha - i;
+                aux_linha--;
             }
         }
         else if(posAdj == 1){
-            i = 0;
             aux_linha = linha;
             aux_coluna = coluna - 2;
-            while(aux_coluna > 0 || board->pieces[aux_linha][aux_coluna].formato != ' ' || board->pieces[aux_linha][aux_coluna].cor != ' '){
+            while(aux_coluna > 0 && board->pieces[aux_linha][aux_coluna].formato != ' ' && board->pieces[aux_linha][aux_coluna].cor != ' '){
                 if(pecaIgual == 1){
                     if(board->pieces[aux_linha][aux_coluna].formato != peca){
+                        verifica = 0;
+                        break;
+                    }
+                    else if(board->pieces[aux_linha][aux_coluna].cor == numero){
                         verifica = 0;
                         break;
                     }
@@ -673,18 +680,24 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
                         verifica = 0;
                         break;
                     }
+                    else if(board->pieces[aux_linha][aux_coluna].formato == peca){
+                        verifica = 0;
+                        break;
+                    }
                 }
-                i++;
-                aux_coluna = aux_coluna - i;
+                aux_coluna--;
             }
         }
         else if(posAdj == 2){
-            i = 0;
             aux_linha = linha;
             aux_coluna = coluna + 2;
-            while(aux_coluna < board->columns || board->pieces[aux_linha][aux_coluna].formato != ' ' || board->pieces[aux_linha][aux_coluna].cor != ' '){
+            while(aux_coluna < board->columns && board->pieces[aux_linha][aux_coluna].formato != ' ' && board->pieces[aux_linha][aux_coluna].cor != ' '){
                 if(pecaIgual == 1){
                     if(board->pieces[aux_linha][aux_coluna].formato != peca){
+                        verifica = 0;
+                        break;
+                    }
+                    else if(board->pieces[aux_linha][aux_coluna].cor == numero){
                         verifica = 0;
                         break;
                     }
@@ -694,18 +707,24 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
                         verifica = 0;
                         break;
                     }
+                    else if(board->pieces[aux_linha][aux_coluna].formato == peca){
+                        verifica = 0;
+                        break;
+                    }
                 }
-                i++;
-                aux_coluna = aux_coluna + i;
+                aux_coluna++;
             }
         }
         else if(posAdj == 3){
-            i = 0;
             aux_linha = linha + 2;
             aux_coluna = coluna;
-            while(aux_linha < board->rows || board->pieces[aux_linha][aux_coluna].formato != ' ' || board->pieces[aux_linha][aux_coluna].cor != ' '){
+            while(aux_linha < board->rows && board->pieces[aux_linha][aux_coluna].formato != ' ' && board->pieces[aux_linha][aux_coluna].cor != ' '){
                 if(pecaIgual == 1){
                     if(board->pieces[aux_linha][aux_coluna].formato != peca){
+                        verifica = 0;
+                        break;
+                    }
+                    else if(board->pieces[aux_linha][aux_coluna].cor == numero){
                         verifica = 0;
                         break;
                     }
@@ -715,9 +734,12 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna){
                         verifica = 0;
                         break;
                     }
+                    else if(board->pieces[aux_linha][aux_coluna].formato == peca){
+                        verifica = 0;
+                        break;
+                    }
                 }
-                i++;
-                aux_linha = aux_linha + i;
+                aux_linha++;
             }
         }
     }
@@ -738,7 +760,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
     int aux = 0;
     while(aux != -1)
     {   
-        if(aux == 0){
+        if(aux == 0 || jog->qtdPieces == 0){
             jog->qtdPieces = 6;     //Setando a quantidade de peças iniciais somente em cada nova jogada
         }
         printBoard(board);
