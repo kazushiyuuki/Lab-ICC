@@ -50,7 +50,10 @@ int main()
         //Apenas para teste
         jogAtual = inicio;
         leituraComandos(board, monte, jogAtual);
+        jogAtual->pontos = 12;
         leituraComandos(board, monte, jogAtual->proxJog);
+        jogAtual->proxJog->pontos = 12;
+        selecionarVencedor(inicio);
         controleJogar = 2;
     }
 }

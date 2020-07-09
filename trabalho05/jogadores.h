@@ -32,3 +32,5 @@ int verificaPeca(char formato, char cor);
 int verificaTroca(pontDeque monte, pontJogadores jog, piece pecas[], int qtdPecasTtroca);
 
 pontJogadores iniciarJogs(pontDeque monte, int qtdJogs);
+
+void selecionarVencedor(pontJogadores inicio);

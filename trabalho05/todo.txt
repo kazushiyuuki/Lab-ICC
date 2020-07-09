@@ -1,4 +1,3 @@
 1 - Implementar função para contar pontos
-2 - Implementar função para mostrar o vencedor
-3 - Implementar cheat mode
-4 - Unir tudo na main.c 
+2 - Implementar cheat mode
+3 - Unir tudo na main.c 

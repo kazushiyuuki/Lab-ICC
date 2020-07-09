@@ -1093,3 +1093,44 @@ pontJogadores iniciarJogs(pontDeque monte, int qtdJogs)
     }
     return inicioJog;
 }
+
+void selecionarVencedor(pontJogadores inicio)
+{
+    int maiorPontos = 0, qtdPiecesVencedor = 0, qtdVencedores = 0;
+    char nome[21];
+    pontJogadores jogAtual = inicio;
+    while(jogAtual != NULL)
+    {
+        if(jogAtual->pontos > maiorPontos)
+        {
+            maiorPontos = jogAtual->pontos;
+            qtdPiecesVencedor = jogAtual->qtdPieces;
+            qtdVencedores = 1;
+        }
+        else if(jogAtual->pontos == maiorPontos)
+        {
+            if(jogAtual->qtdPieces < qtdPiecesVencedor)
+            {
+                qtdPiecesVencedor = jogAtual->qtdPieces;
+                qtdVencedores = 1;
+            }
+            else if(jogAtual->qtdPieces == qtdPiecesVencedor)
+            {
+                qtdVencedores++;
+            }
+        }
+        jogAtual = jogAtual->proxJog;
+    }
+
+    jogAtual = inicio;
+    int i = qtdVencedores; 
+    while(i != 0)
+    {
+        if(jogAtual->pontos == maiorPontos && jogAtual->qtdPieces == qtdPiecesVencedor)
+        {
+            printf("O jogador %s ganhou! Acumulou %d pontos e sobraram %d pecas\n", jogAtual->nome, jogAtual->pontos, jogAtual->qtdPieces);
+            i--;
+        }
+        jogAtual = jogAtual->proxJog;
+    }
+}
