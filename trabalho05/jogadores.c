@@ -40,7 +40,10 @@ void printarJog(pontJogadores jog)
     printf("Pecas disponiveis: ");
     for(int i = 0; i < jog->qtdPieces; i++)
     {
-        printf("[%c%c] ", jog->piecesJogador[i].formato, jog->piecesJogador[i].cor);
+        if(jog->piecesJogador[i].formato != ' ' &&  jog->piecesJogador[i].cor != ' ')
+        {
+            printf("[%c%c] ", jog->piecesJogador[i].formato, jog->piecesJogador[i].cor);
+        }
     }
     printf("\n");
 }
@@ -79,15 +82,10 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
                 k++;
             }
         }
-        jog->piecesJogador[k].formato = '\0';
-        jog->piecesJogador[k].cor = '\0';
+        jog->piecesJogador[k].formato = ' ';
+        jog->piecesJogador[k].cor = ' ';
         jog->qtdPieces--;
-        trocarPiecesJog(monte, jog, jog->qtdPieces);
-        //Remove a peça do deck do jogador depois de jogar
-        pontCarta apagar = monte->fim;
-        free(apagar);
-        monte->qtdCartas--;
-        //Aumenta o número da jogada
+
         (*n_jogada)++;
     }
     else{
@@ -949,6 +947,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
             else if(!strcmp(funcao, passar))
             {
                 printf("Funcao passar acionada\n");
+                reporPiecesJog(jog, monte);
                 aux = -1;   
             }
             else
@@ -1132,5 +1131,20 @@ void selecionarVencedor(pontJogadores inicio)
             i--;
         }
         jogAtual = jogAtual->proxJog;
+    }
+}
+
+void reporPiecesJog(pontJogadores jog, pontDeque monte)
+{
+    while(monte->qtdCartas > 0 && jog->qtdPieces < 6)
+    {   
+        jog->piecesJogador[jog->qtdPieces].formato = monte->inicio->info.formato;
+        jog->piecesJogador[jog->qtdPieces].cor = monte->inicio->info.cor;
+        jog->qtdPieces++;
+
+        pontCarta temp = monte->inicio;
+        monte->inicio = monte->inicio->prox;
+        monte->qtdCartas--;
+        free(temp);
     }
 }
