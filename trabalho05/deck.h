@@ -1,4 +1,4 @@
-#include"jogo.h"
+ #include"jogo.h"
 
 typedef struct aux
 {
@@ -20,5 +20,3 @@ pontDeque iniciarDeque();
 pontDeque gerarMonte();
 
 void resetarDeque(pontDeque deque);
-
-void printDeque(pontDeque deque);

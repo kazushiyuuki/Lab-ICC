@@ -20,5 +20,3 @@ void reallocBoard(pont board, int linha, int coluna);
 void resetBoard(pont board);
 
 void printBoard(pont board);
-
-void insertBoard(pont board);

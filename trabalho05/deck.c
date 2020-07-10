@@ -116,17 +116,3 @@ void resetarDeque(pontDeque deque)
     }
     free(deque);
 }
-
-void printDeque(pontDeque deque)
-{
-    pontCarta aux = deque->inicio;
-    int cont = 1; 
-    printf("Imprimindo deque: %d cartas\n", deque->qtdCartas);
-    while(aux != NULL && cont <= deque->qtdCartas)
-    {
-        printf("%d : [%c%c]\n", cont, aux->info.formato, aux->info.cor);
-        aux = aux->prox;
-        cont++;
-    }
-    printf("Fim--------------\n");
-}
