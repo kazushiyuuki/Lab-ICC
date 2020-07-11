@@ -74,6 +74,7 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
         board->pieces[linha][coluna].cor = numero;
         reallocBoard(board, linha, coluna);
             
+        //Retirando a peça jogada das peças do jogador
         int k = 0;
         for(i = 0; i < jog->qtdPieces; i++){
             if(i != pos){
@@ -85,8 +86,7 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
         jog->piecesJogador[k].formato = ' ';
         jog->piecesJogador[k].cor = ' ';
         jog->qtdPieces--;
-
-        (*n_jogada)++;
+        (*n_jogada)++;      //Atualizando o número da jogada
     }
     else{
         printf("***Jogada invalida***\n");
@@ -784,7 +784,7 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna, i
 //Função recebe o tabuleiro e o ponteiro para o jogador
 //O que faz até o momento: identifica as funções trocar, jogar, passar e comandos inválidos. Aceita também os comandos em maiusculo.
 //O que falta: identificar as peças que vão ser trocadas ou jogadas para passar para as funções
-void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
+void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
 {
    //Definição das strings para comparação com os comandos lidos
     char trocar[] = "TROCAR";
@@ -794,6 +794,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
     int aux = 0, num_jogada = 1, *n_jogada;
     n_jogada = &num_jogada;     //Ponteiro que aponta para a variável que armazena o número da jogada atual do jogador
     int *todasJogadas = (int *)malloc(2 * sizeof(int)); //Vetor que armazena as posições das jogadas do jogador
+
     while(aux != -1)
     {   
         if(aux == 0 || jog->qtdPieces == 0){
@@ -881,7 +882,12 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
                 else{
                     coluna = atoi(jogada);      //Transformando a coluna, de string para int
                 }
-                joga(board, monte, jog, comando[6], comando[7], linha, coluna, n_jogada, todasJogadas);    //Chamando a função para jogar
+                if(cheat == 'S'){
+                    cheatMode(board, monte, jog, comando[6], comando[7], linha, coluna, n_jogada, todasJogadas);
+                }
+                else{
+                    joga(board, monte, jog, comando[6], comando[7], linha, coluna, n_jogada, todasJogadas);    //Chamando a função para jogar
+                }
                 aux = 2;
             }
             else if(!strcmp(funcao, passar))
@@ -941,13 +947,20 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog)
                 else{
                     coluna = atoi(jogada);      //Transformando a coluna, de string para int
                 }
-                joga(board, monte ,jog, comando[6], comando[7], linha, coluna, n_jogada, todasJogadas);    //Chamando a função para jogar
+                if(cheat == 'S'){
+                    cheatMode(board, monte, jog, comando[6], comando[7], linha, coluna, n_jogada, todasJogadas);
+                }
+                else{
+                    joga(board, monte, jog, comando[6], comando[7], linha, coluna, n_jogada, todasJogadas);    //Chamando a função para jogar
+                }
                 aux = 2;
             }
             else if(!strcmp(funcao, passar))
             {
                 printf("Funcao passar acionada\n");
-                reporPiecesJog(jog, monte);
+                if(jog->qtdPieces < 6){
+                    reporPiecesJog(jog, monte);
+                }
                 aux = -1;   
             }
             else
@@ -1148,3 +1161,77 @@ void reporPiecesJog(pontJogadores jog, pontDeque monte)
         free(temp);
     }
 }
+
+void cheatMode(pont board, pontDeque monte, pontJogadores jog, char peca, char numero, int linha, int coluna, int *n_jogada, int *todasJogadas)
+{  
+    int i, aux = 0, pos = -1;
+    if(linha >= board->rows || coluna >= board->columns || linha < 0 || coluna < 0 || board->pieces[linha][coluna].cor != ' ' || board->pieces[linha][coluna].formato != ' '){
+        aux = 1;
+    }
+    else{
+        //Verifica se a peça jogada está entre as peças do jogador
+        for(i = 0; i < jog->qtdPieces; i++)
+        {   
+            if(peca == jog->piecesJogador[i].formato && numero == jog->piecesJogador[i].cor)
+            {
+                aux = 0;
+                pos = i;
+                break;
+            }
+            else{
+                aux = 1;
+            }
+        }
+        //Se a peça não estiver entre as peças do jogador, procura no monte
+        if(aux == 1){
+            pontCarta carta = monte->inicio;
+            pontCarta apagar;
+            while(carta != NULL && monte->qtdCartas != 0)
+            {   
+                apagar = carta;
+                if(carta->info.formato == peca && carta->info.cor == numero)
+                {
+                    aux = 0;
+                    free(apagar);
+                    monte->qtdCartas--;
+                    break;
+                }
+                else
+                {
+                    aux = 1;
+                }
+                if(carta->prox != NULL)
+                {
+                    carta = carta->prox;
+                }
+            }
+        }
+    }    
+    printf("Qtd cartas: %d\n", monte->qtdCartas);
+    int verifica = verificarJogada(board, peca, numero, linha, coluna, n_jogada, todasJogadas);
+    if(aux == 0 && verifica == 1){
+        board->pieces[linha][coluna].formato = peca; 
+        board->pieces[linha][coluna].cor = numero;
+        reallocBoard(board, linha, coluna);
+        //Caso a peça tenha sido encontrada no deck do jogador
+        if(pos != -1){
+            //Retirando a peça jogada das peças do jogador
+            int k = 0;
+            for(i = 0; i < jog->qtdPieces; i++){
+                if(i != pos){
+                    jog->piecesJogador[k].formato = jog->piecesJogador[i].formato;
+                    jog->piecesJogador[k].cor = jog->piecesJogador[i].cor;
+                    k++;
+                }
+            }
+            jog->piecesJogador[k].formato = ' ';
+            jog->piecesJogador[k].cor = ' ';
+            jog->qtdPieces--;
+        }
+        (*n_jogada)++;      //Atualizando o número da jogada
+    }
+    else{
+        printf("***Jogada invalida***\n");
+    }
+}
+

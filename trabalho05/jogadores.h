@@ -21,7 +21,7 @@ void joga(pont board, pontDeque monte,pontJogadores jog, char peca, char numero,
 
 int verificarJogada(pont board, char peca, char numero, int linha, int coluna, int *n_jogada, int *todasJogadas);
 
-void leituraComandos(pont board, pontDeque monte, pontJogadores jog);
+void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat);
 
 void fgetss(char str[], int n, char tipoComando[]);
 
@@ -36,3 +36,5 @@ pontJogadores iniciarJogs(pontDeque monte, int qtdJogs);
 void selecionarVencedor(pontJogadores inicio);
 
 void reporPiecesJog(pontJogadores jog, pontDeque monte);
+
+void cheatMode(pont board, pontDeque monte,pontJogadores jog, char peca, char numero, int linha, int coluna, int *n_jogada, int *todasJogadas);

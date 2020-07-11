@@ -46,12 +46,26 @@ int main()
             }
         }
         */
-
+        //Verificando se o usuário quer jogar em cheat mode
+        printf("Cheat mode (S/N): ");
+        char cheat;
+        scanf(" %c", &cheat);
+        if(cheat == 's' || cheat == 'n'){
+            cheat = cheat - 32;
+        }
+        while(cheat != 'S' && cheat != 'N'){
+            printf("Cheat mode (S/N): ");
+            scanf(" %c", &cheat);
+            if(cheat == 's' || cheat == 'n'){
+                cheat = cheat - 32;
+            }
+        }
+        getchar();
         //Apenas para teste
         jogAtual = inicio;
-        leituraComandos(board, monte, jogAtual);
+        leituraComandos(board, monte, jogAtual, cheat);
         jogAtual->pontos = 12;
-        leituraComandos(board, monte, jogAtual->proxJog);
+        leituraComandos(board, monte, jogAtual->proxJog, cheat);
         jogAtual->proxJog->pontos = 12;
         selecionarVencedor(inicio);
         controleJogar = 2;
