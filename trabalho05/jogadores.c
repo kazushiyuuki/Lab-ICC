@@ -1207,7 +1207,7 @@ void cheatMode(pont board, pontDeque monte, pontJogadores jog, char peca, char n
             }
         }
     }    
-    printf("Qtd cartas: %d\n", monte->qtdCartas);
+    
     int verifica = verificarJogada(board, peca, numero, linha, coluna, n_jogada, todasJogadas);
     if(aux == 0 && verifica == 1){
         board->pieces[linha][coluna].formato = peca; 
