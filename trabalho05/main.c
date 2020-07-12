@@ -35,17 +35,6 @@ int main()
             jogAtual = jogAtual->proxJog;
             i++;
         }
-        /*
-        while(monte->qtdCartas != 0)
-        {
-            jogAtual = inicio;
-            while(jogAtual != NULL)
-            {
-                leituraComandos(board, monte, jogAtual);
-                jogAtual = jogAtual->proxJog;
-            }
-        }
-        */
         //Verificando se o usuário quer jogar em cheat mode
         printf("Cheat mode (S/N): ");
         char cheat;
@@ -61,11 +50,26 @@ int main()
             }
         }
         getchar();
+        
+        while(monte->qtdCartas != 0)
+        {
+            jogAtual = inicio;
+            while(jogAtual != NULL)
+            {
+                leituraComandos(board, monte, jogAtual, cheat);
+                jogAtual = jogAtual->proxJog;
+            }
+        }
+        
+        
         //Apenas para teste
-        jogAtual = inicio;
+     /*   jogAtual = inicio;
         leituraComandos(board, monte, jogAtual, cheat);
         leituraComandos(board, monte, jogAtual->proxJog, cheat);
         selecionarVencedor(inicio);
-        controleJogar = 2;
+        controleJogar = 2;*/
+        char jogarNov[2];
+        printf("Deseja jogar novamente?");
+        fgetss(jogarNov, 1, "Comando para jogar novamente");
     }
 }

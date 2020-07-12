@@ -1242,52 +1242,96 @@ void contarPontos(pontJogadores jog, int *todasJogadas, int tam, pont board)
     int jogadaHorizontal, jogadaVertical;
     int ultimaPosicaoH = todasJogadas[tam-2];
     int ultimaPosicaoV = todasJogadas[tam-1];
-    int auxPontos = 0;
+    int auxPontos = 0, auxPontosH = 0, auxPontosV = 0;
     if(tam >= 4)
     {
         jogadaHorizontal = todasJogadas[tam-2] - todasJogadas[tam-4];
         jogadaVertical = todasJogadas[tam-1] - todasJogadas[tam-3];
+        printf("%d %d\n", jogadaHorizontal, jogadaVertical);
         if(jogadaHorizontal == 0)
         {
-            auxPontos += contarPosicoesHorizontal(board, ultimaPosicaoH, ultimaPosicaoV);
+            auxPontosH = contarPosicoesHorizontal(board, ultimaPosicaoH, ultimaPosicaoV) + 1;
+            printf("Pontos na horizontal: %d\n", auxPontosH);
+            if( auxPontosH == 6)
+            {
+                auxPontos = auxPontosH*2;
+            }
+            else
+            {
+                auxPontos = auxPontosH;
+            }
             int k = 0;
             while(k < tam)
             {
-                auxPontos += contarPosicoesVertical(board, todasJogadas[k], todasJogadas[k+1]);
+                auxPontosV = contarPosicoesVertical(board, todasJogadas[k], todasJogadas[k+1]);
+                if(auxPontosV == 5)
+                {
+                    auxPontos += (auxPontosV+1)*2;
+                }
+                else if(auxPontosV >= 1)
+                {
+                    auxPontos += auxPontosV+1;
+                }
                 k+=2;
             }
-            jog->pontos = auxPontos;
+            jog->pontos += auxPontos;
         }
         else if(jogadaVertical == 0)
         {
-            auxPontos += contarPosicoesVertical(board, ultimaPosicaoH, ultimaPosicaoV);
-            int w = 0;
-            while(w < tam)
+            auxPontosV = contarPosicoesVertical(board, ultimaPosicaoH, ultimaPosicaoV) + 1;
+            printf("Pontos na vertical: %d\n", auxPontosV);
+            if( auxPontosV == 6)
             {
-                auxPontos += contarPosicoesHorizontal(board, todasJogadas[w], todasJogadas[w+1]);
-                w+=2;
+                auxPontos = auxPontosV*2;
             }
-            jog->pontos = auxPontos;
+            else
+            {
+                auxPontos = auxPontosV;
+            }
+            int k = 0;
+            while(k < tam)
+            {
+                auxPontosH = contarPosicoesHorizontal(board, todasJogadas[k], todasJogadas[k+1]);
+                if(auxPontosH == 5)
+                {
+                    auxPontos += (auxPontosH+1)*2;
+                }
+                else if(auxPontosH >= 1)
+                {
+                    auxPontos += auxPontosH+1;
+                }
+                k+=2;
+            }
+            jog->pontos += auxPontos;
         }
     }
     else
     {
-        auxPontos = contarPosicoesVertical(board, ultimaPosicaoH, ultimaPosicaoV) + contarPosicoesHorizontal(board, ultimaPosicaoH, ultimaPosicaoV);
-        if(auxPontos == 0)
+        auxPontosH = contarPosicoesHorizontal(board, ultimaPosicaoH, ultimaPosicaoV)+1;
+        auxPontosV = contarPosicoesVertical(board, ultimaPosicaoH, ultimaPosicaoV);
+        if(auxPontosH == 6)
         {
-            jog->pontos++;
+            auxPontos = auxPontosH*2;
         }
         else
         {
-            jog->pontos = auxPontos;
+            auxPontos = auxPontosH;
         }
-        
+        if(auxPontosV == 5)
+        {
+            auxPontos += (auxPontosV+1)*2;
+        }
+        else if(auxPontosV >= 1)
+        {
+            auxPontos += auxPontosV+1;
+        }
+        jog->pontos += auxPontos;
     }
 }
 
 int contarPosicoesHorizontal(pont board, int posHInicial, int posVInicial)
 {
-    int pontos = 1;
+    int pontos = 0;
     int controlePosicao = posVInicial + 1;
     while(board->pieces[posHInicial][controlePosicao].formato != ' ')
     {
@@ -1300,20 +1344,12 @@ int contarPosicoesHorizontal(pont board, int posHInicial, int posVInicial)
         controlePosicao--;
         pontos++;
     }
-    if(pontos == 6)
-    {
-        return 12;
-    }
-    else if(pontos > 1)
-    {
-        return pontos;
-    }
-    return 0;
+    return pontos;
 }
 
 int contarPosicoesVertical(pont board, int posHInicial, int posVInicial)
 {
-    int pontos = 1;
+    int pontos = 0;
     int controlePosicao = posHInicial + 1;
     while(board->pieces[controlePosicao][posVInicial].formato != ' ')
     {
@@ -1326,13 +1362,5 @@ int contarPosicoesVertical(pont board, int posHInicial, int posVInicial)
         controlePosicao--;
         pontos++;
     }
-    if(pontos == 6)
-    {
-        return 12;
-    }
-    else if(pontos > 1)
-    {
-        return pontos;
-    }
-    return 0;
+    return pontos;
 }
