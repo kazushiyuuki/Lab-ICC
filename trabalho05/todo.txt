@@ -1,3 +1,0 @@
-1 - Implementar função para contar pontos
-2 - Implementar cheat mode
-3 - Unir tudo na main.c 
