@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include"jogadores.h"
+#include<ctype.h>
 
 int main()
 {
@@ -20,16 +21,13 @@ int main()
         //Leitura da quantidade de jogadores
         printf("Digite o numero de jogadores: ");
         fgetss(aux, 1, "Numero de jogadores");
-        qtdJogs = atoi(aux);
-        /*
-        //Controle para manter o número recomendado de jogadores
-        while(qtdJogs < 2 && qtdJogs > 4)
+        while(isdigit(aux[0]) == 0)
         {
-            printf("Digite novamente o numero de jogadores, quantidade minima de 2 e maxima de 4 jogadores: ");
-            scanf("%d", &qtdJogs);
+            printf("Numero invalido! Digite novamente o número de jogadores: ");
+            fgetss(aux, 1, "Numero de jogadores");
         }
-        */
-
+        qtdJogs = atoi(aux);
+        
         //Aqui são iniciados os jogadores
         pontJogadores inicio =  iniciarJogs(monte, qtdJogs);
 
