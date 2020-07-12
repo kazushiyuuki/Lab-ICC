@@ -769,7 +769,6 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna, i
                 }
             }
         }
-        printf("%d %d", linha, coluna);
         //Acresecentando a nova jogada ao vetor
         todasJogadas[tam - 2] = linha;
         todasJogadas[tam - 1] = coluna;
