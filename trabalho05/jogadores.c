@@ -750,8 +750,6 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna, i
             for(i = 0; i < tam_aux; i++){
                  auxJogadas[i] = todasJogadas[i];
             }
-            free(todasJogadas);
-            todasJogadas = (int *)realloc(todasJogadas, tam * sizeof(int));
             for(i = 0; i < tam_aux; i++){
                 todasJogadas[i] = auxJogadas[i];
             }
@@ -788,7 +786,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
 
     int aux = 0, num_jogada = 1, *n_jogada;
     n_jogada = &num_jogada;     //Ponteiro que aponta para a variável que armazena o número da jogada atual do jogador
-    int *todasJogadas = (int *)malloc(2 * sizeof(int)); //Vetor que armazena as posições das jogadas do jogador
+    int *todasJogadas = (int *)malloc(12 * sizeof(int)); //Vetor que armazena as posições das jogadas do jogador
 
     int pontosAtual = jog->pontos;
 
@@ -845,7 +843,6 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
             }
             else if(!strcmp(funcao, jogar))
             {
-                printf("Funcao jogar acionada\n");
                 //Lendo a peça e a posição em que será jogada
                 int linha, coluna, j, cont = 0, k = 0;
                 char jogada[4];
@@ -889,7 +886,6 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
             }
             else if(!strcmp(funcao, passar))
             {
-                printf("Funcao passar acionada\n");
                 aux = -1;
             }
             else
@@ -910,7 +906,6 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
             funcao[i] = '\0';
             if(!strcmp(funcao, jogar))
             {
-                printf("Funcao jogar acionada\n");
                 //Lendo a peça e a posição em que será jogada
                 int linha, coluna, j, cont = 0, k = 0;
                 char jogada[4];
@@ -954,7 +949,6 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
             }
             else if(!strcmp(funcao, passar))
             {
-                printf("Funcao passar acionada\n");
                 contarPontos(jog, todasJogadas, (num_jogada-1)*2, board);
                 if(jog->qtdPieces < 6){
                     reporPiecesJog(jog, monte);
@@ -1205,7 +1199,6 @@ void cheatMode(pont board, pontDeque monte, pontJogadores jog, char peca, char n
                     free(apagar);
                     carta = NULL;
                     monte->qtdCartas--;
-                    printf("-------------------Peca retirado do monte------------\n");
                     break;
                 }
                 else
@@ -1214,10 +1207,6 @@ void cheatMode(pont board, pontDeque monte, pontJogadores jog, char peca, char n
                     anterior = carta;
                     carta = carta->prox;
                 }
-            }
-            if(aux == 1)
-            {   
-                printf("Peca nao disponivel no monte de pecas\n");
             }
         }
     }    
@@ -1254,7 +1243,6 @@ void contarPontos(pontJogadores jog, int *todasJogadas, int tam, pont board)
     int ultimaPosicaoH = todasJogadas[tam-2];
     int ultimaPosicaoV = todasJogadas[tam-1];
     int auxPontos = 0;
-    printf("Verificando pecas %d %d\n", ultimaPosicaoH, ultimaPosicaoV);
     if(tam >= 4)
     {
         jogadaHorizontal = todasJogadas[tam-2] - todasJogadas[tam-4];
