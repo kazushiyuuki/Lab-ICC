@@ -3,13 +3,16 @@
 #include<stdlib.h>
 #include<string.h>
 
+//Essa função realiza a distribuição de peças para um determinado jogador
 void iniciarPiecesJog(pontDeque monte, pontJogadores jog)
 {
     pontCarta temp;
     for(int i = 0; i < 6; i++)
     {
+        //Aqui a carta do início do monte é colocada na posição i do vetor de peças da estrutura jogador
         jog->piecesJogador[i].cor = monte->inicio->info.cor;
         jog->piecesJogador[i].formato = monte->inicio->info.formato;
+        //Aqui é feito o remanejamento dos ponteiros
         temp = monte->inicio;
         monte->inicio = monte->inicio->prox;
         monte->qtdCartas--;
@@ -18,22 +21,27 @@ void iniciarPiecesJog(pontDeque monte, pontJogadores jog)
     jog->qtdPieces = 6;
 }
 
+//Essa função realiza a troca da peça na posição pos do vetor de peças do jogador
 void trocarPiecesJog(pontDeque monte, pontJogadores jog, int pos)
 {
+    //Aloca-se um espaço para uma nova carta, armazena as informações da peça a ser trocada nela e coloca ela no fim do monte
     pontCarta temp = (pontCarta)malloc(sizeof(carta));
     temp->prox = NULL;
     temp->info.cor = jog->piecesJogador[pos].cor;
     temp->info.formato = jog->piecesJogador[pos].formato;
     monte->fim->prox = temp;
 
+    //Coloca as informações da carta iniciaal na posição do vetor de peças do jogador
     jog->piecesJogador[pos].cor = monte->inicio->info.cor;
     jog->piecesJogador[pos].formato = monte->inicio->info.formato;
 
+    //Libera a memória da carta no início do deque e remaneja o ponteiro para o novo início do deque
     temp = monte->inicio;
     monte->inicio = monte->inicio->prox;
     free(temp);
 }
 
+//Função para imprimir na tela algumas as informações de um jogador: nome e todas as peças disponíveis
 void printarJog(pontJogadores jog)
 {
     printf("Jogada de %s\n", jog->nome);
@@ -774,12 +782,10 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna, i
     return verifica;
 }
 
-//Função recebe o tabuleiro e o ponteiro para o jogador
-//O que faz até o momento: identifica as funções trocar, jogar, passar e comandos inválidos. Aceita também os comandos em maiusculo.
-//O que falta: identificar as peças que vão ser trocadas ou jogadas para passar para as funções
+//Função que realiza a leitura e interpretação dos comandos e direciona para as funções de trocar, jogar ou passar
 void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
 {
-   //Definição das strings para comparação com os comandos lidos
+    //Definição das strings para comparação com os comandos lidos
     char trocar[] = "TROCAR";
     char jogar[] = "JOGAR";
     char passar[] = "PASSAR";
@@ -787,7 +793,8 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
     int aux = 0, num_jogada = 1, *n_jogada;
     n_jogada = &num_jogada;     //Ponteiro que aponta para a variável que armazena o número da jogada atual do jogador
     int *todasJogadas = (int *)malloc(12 * sizeof(int)); //Vetor que armazena as posições das jogadas do jogador
-
+    
+    //Inteiro utilizado para saber quantos pontos forma obtidos pelo jogador nessa rodada
     int pontosAtual = jog->pontos;
 
     while(aux != -1)
@@ -796,37 +803,54 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
             jog->qtdPieces = 6;     //Setando a quantidade de peças iniciais somente em cada nova jogada
             *n_jogada = 1;          //Setando uma nova jogada 
         }
+        //Imprime na tela as informações da interface
         printBoard(board);
         printf("===========\n");
         printarJog(jog);
+
+        //Variáveis para armazenar os comando dado e a parte do comando que representa a função
         char comando[26];
         char funcao[7];
         int i = 0;
+
+        //A variável serve para controlar o tipo de interface que varia de acordo com o primeiro comando dado
+        //Aux == 0: interface com a opção de troca
         if(aux == 0)
         {
             printf("Opcoes: trocar p1 [p2 p3...] | jogar p1 x y | passar\n");
             fgetss(comando, 25, "Comando");
+
+            //Aqui converte-se as letras minúsculas para maiúsculas a fim de compará-las com as strings definidas de comandos
             toUpper(comando);
+
+            //Aqui é separado a funçaõ do comando em si
             while(comando[i] != ' ' && i < 6)
             {
                 funcao[i] = comando[i];
                 i++;
             }
             funcao[i] = '\0';
+
+            //Caso seja uma troca
             if(!strcmp(funcao, trocar))
             {
+                //auxTrocar repsenta a posição do formato das peças a serem trocadas
                 int auxTrocar = i+1;
                 int tamString = strlen(comando);
+                //Vetor para armazenar as informações a serem trocadas
                 piece pecasTroca[6];
                 int contPecas = 0;
                 while(auxTrocar+1 < tamString)
                 {
+                    //Verifica-se a peça é válida
                     if(verificaPeca(comando[auxTrocar], comando[auxTrocar+1]))
                     {
                         pecasTroca[contPecas].formato = comando[auxTrocar];
                         pecasTroca[contPecas].cor = comando[auxTrocar+1];
                         contPecas++;
                         aux = -1;
+
+                        //Incrementa-se 3 para que a posição seja o do próximo formato a ser trocado
                         auxTrocar += 3;
                     }
                     else
@@ -836,8 +860,10 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
                         break;
                     }
                 }
+                //Caso em que as peças a serem trocadas são todas válidas
                 if(aux == -1)
                 {
+                    //A função verificaTroca realiza as trocas se todas as peças estão realmente entre as peças do jogador
                     aux = verificaTroca(monte, jog, pecasTroca, contPecas);
                 }
             }
@@ -884,6 +910,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
                 }
                 aux = 2;
             }
+            //Para passar basta sair do loop com aux = -1
             else if(!strcmp(funcao, passar))
             {
                 aux = -1;
@@ -893,6 +920,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
                 printf("Comando invalido!\n");
             }
         }
+        //Aqui temos a segunda interface que aparece quando o jogador posiciona alguma peça no tabuleiro
         else if(aux == 2 && jog->qtdPieces != 0)
         {   
             printf("Opcoes: jogar p1 x y | passar\n");
@@ -947,9 +975,13 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
                 }
                 aux = 2;
             }
+            //A função passar depois que o jogador realiza pelo menos um jogada é o momento em que a função de contar pontos é acionada, pois é mais simples contar os pontos com todas as jogadas já realizadas
+            //É realizada também a reposição das peças utilizadas pelo jogador na rodada
             else if(!strcmp(funcao, passar))
             {
+                //Aqui conta-se os pontos
                 contarPontos(jog, todasJogadas, (num_jogada-1)*2, board);
+                //Aqui realiza-se as reposições das peças
                 if(jog->qtdPieces < 6){
                     reporPiecesJog(jog, monte);
                 }
@@ -961,6 +993,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
             }
         }
     }
+    //Aqui é mostrado a pontuação do jogador e a pontuação acumulada na rodada
     printf("*********************************************\n");
     printf("***** Pontuacao %s: %d / Pontuacao acumulada: %d\n", jog->nome, jog->pontos, (jog->pontos-pontosAtual));
     printf("*********************************************\n");
@@ -973,6 +1006,7 @@ void fgetss(char str[], int n, char tipoComando[])
 {
   char a;
   int i;
+  //Aqui são lidos os caracteres possíveis e armazenadas na string
   for(i = 0; i < n; i++)
   {
     a = getc(stdin);
@@ -984,6 +1018,7 @@ void fgetss(char str[], int n, char tipoComando[])
     str[i] = a;
   }
   i = 0;
+  //Aqui são lidos os caracteres excedentes
   while(a != '\n')
   {
     if(i == 1)
@@ -996,12 +1031,15 @@ void fgetss(char str[], int n, char tipoComando[])
   }
 }
 
+//Função responsável por converter as letras minúsculas em maiúsculas de um string
 void toUpper(char str[])
 {
     int tam = strlen(str);
     for(int i = 0; i <= tam; i++){
+        //Identifica-se que é uma letra minúscula pelo código ASCII
         if((str[i] >= 97 ) && (str[i] <= 122 ))
         {
+            //Aqui é feita a conversão
             str[i] = str[i] - 32;            
         }
     }
@@ -1015,6 +1053,7 @@ int verificaPeca(char formato, char cor)
     char cores[] = {'1', '2', '3', '4', '5', '6'};
 
     int resFormato = 0, resCor = 0, i;
+    //Verificação do formato
     for(i = 0; i < 6 && resFormato == 0; i++)
     {
         if(formatos[i] == formato)
@@ -1022,6 +1061,7 @@ int verificaPeca(char formato, char cor)
             resFormato = 1;
         }
     }
+    //Verificação da cor
     for(i = 0; i < 6 && resCor == 0; i++)
     {
         if(cores[i] == cor)
@@ -1029,6 +1069,7 @@ int verificaPeca(char formato, char cor)
             resCor = 1;
         }
     }
+    //Retorna 1 somente se o formato e cor forem válidos
     if(resCor == 1 && resFormato == 1)
     {
         return 1;
@@ -1036,10 +1077,16 @@ int verificaPeca(char formato, char cor)
     return 0;
 }
 
+//Função que realiza as trocas somente se todas as peças a serem trocadas são peaçs do jogador
+//As peças a serem trocadas estão contidas no vetor pecas
 int verificaTroca(pontDeque monte, pontJogadores jog, piece pecas[], int qtdPecasTtroca)
 {
     int cont = 0;
+
+    //Vetor que armazena as posições do vetor de peças do jogador que estão as peças que serão trocadas
     int posTroca[6];
+
+    //For para identificar as peças a serem trocadas no vetor de peças do jogador
     for(int i = 0; i < qtdPecasTtroca; i++)
     {
         for(int j = 0; j < jog->qtdPieces; j++)
@@ -1054,8 +1101,10 @@ int verificaTroca(pontDeque monte, pontJogadores jog, piece pecas[], int qtdPeca
             }
         }
     }
+    //Verificação se todas as trocas a serem realizadas são possíveis
     if(cont >= qtdPecasTtroca)
     {
+        //Realiza-se as trocas utilizando a funçaõ trocaPiecesJog
         printf("Realizando troca de: ");
         int k;
         for(k = 0; k < qtdPecasTtroca; k++)
@@ -1069,6 +1118,7 @@ int verificaTroca(pontDeque monte, pontJogadores jog, piece pecas[], int qtdPeca
         }
         return -1;
     }
+    //Caso em que pelo menos uma troca não é possível
     else
     {
         printf("Pecas invalidas para troca!\n");
@@ -1077,21 +1127,28 @@ int verificaTroca(pontDeque monte, pontJogadores jog, piece pecas[], int qtdPeca
     
 }
 
+//Funçaõ para alocar memória para os jogadores, distribuir peças as peça e zerar os pontos
 pontJogadores iniciarJogs(pontDeque monte, int qtdJogs)
 {
     int i = 0;
+    //Ponteiro necessários para organizar a ordem dos jogadores
     pontJogadores jogador, jogAnterior = NULL, inicioJog;
+
     while(i < qtdJogs)
     {
+        //Aloca-se memória
         jogador = (pontJogadores)malloc(sizeof(jogadores));
+        //Caso do primeiro jogador
         if(i == 0)
         {
-          inicioJog = jogador;
+            inicioJog = jogador;
         }
+        //Caso para os outros jogadores
         if(jogAnterior != NULL)
         {
             jogAnterior->proxJog = jogador;
         }
+        //Distribuição das peças e zera-se os pontos
         iniciarPiecesJog(monte, jogador);
         jogador->pontos = 0;
         jogador->proxJog = NULL;
@@ -1101,26 +1158,36 @@ pontJogadores iniciarJogs(pontDeque monte, int qtdJogs)
     return inicioJog;
 }
 
+//Função para selecionar o vencedor. O primeiro critério é a maior quantidade de pontos. O segundo critério, se houver empate, é a menor quantidade de peças disponíveis no vetor de peças do jogador.
+//Se houver empate novamente, os jogadores empatados são declarados vencedores
 void selecionarVencedor(pontJogadores inicio)
 {
+    //Inteiros que armazeranarão, respectivamente, a maior quantidade de pontos, a quantidade de peças do jogador com a maior quantidade de peças e a quantidade de vencedores
     int maiorPontos = 0, qtdPiecesVencedor = 0, qtdVencedores = 0;
+
     char nome[21];
     pontJogadores jogAtual = inicio;
+
+    //Percorre-se todos os jogadores
     while(jogAtual != NULL)
     {
+        //Caso em que a quantidade de pontos desse jogador é maior que a maior quantidade de pontos até então
         if(jogAtual->pontos > maiorPontos)
         {
             maiorPontos = jogAtual->pontos;
             qtdPiecesVencedor = jogAtual->qtdPieces;
             qtdVencedores = 1;
         }
+        //Caso em que os pontos são iguais
         else if(jogAtual->pontos == maiorPontos)
         {
+            //Caso em que a quantidade de peças desse jogador é menor que a do jogador com o qual ele está empatado em pontos
             if(jogAtual->qtdPieces < qtdPiecesVencedor)
             {
                 qtdPiecesVencedor = jogAtual->qtdPieces;
                 qtdVencedores = 1;
             }
+            //Caso em que são iguais, aumenta-se o nuemro de vencedores
             else if(jogAtual->qtdPieces == qtdPiecesVencedor)
             {
                 qtdVencedores++;
@@ -1131,6 +1198,8 @@ void selecionarVencedor(pontJogadores inicio)
 
     jogAtual = inicio;
     int i = qtdVencedores; 
+
+    //Imprime na tela o vencedor ou vencedores
     while(i != 0)
     {
         if(jogAtual->pontos == maiorPontos && jogAtual->qtdPieces == qtdPiecesVencedor)
@@ -1142,14 +1211,19 @@ void selecionarVencedor(pontJogadores inicio)
     }
 }
 
+//Função que repõe as peças de um jogador após pelo menos uma jogada
 void reporPiecesJog(pontJogadores jog, pontDeque monte)
 {
     while(monte->qtdCartas > 0 && jog->qtdPieces < 6)
     {   
+        //Como depois de uma jogada, as peças são realocadas para a esquerda, a quantidade de peças do jogador também é a primeira posição vazia
+
+        //Aqui as informações da carta no início do monte são copiadas para a primeira posição vazia
         jog->piecesJogador[jog->qtdPieces].formato = monte->inicio->info.formato;
         jog->piecesJogador[jog->qtdPieces].cor = monte->inicio->info.cor;
         jog->qtdPieces++;
 
+        //Remanejamento do ponteiro que aponta para a carta incial do motne
         pontCarta temp = monte->inicio;
         monte->inicio = monte->inicio->prox;
         monte->qtdCartas--;
@@ -1157,6 +1231,8 @@ void reporPiecesJog(pontJogadores jog, pontDeque monte)
     }
 }
 
+//Função que realiza a jogada quando o cheat mode foi selecionado: verifica se a peça está disponível no vetor de peças do jogador, retira do monte caso não esteja,
+//Verifica se posição é válida, armazena a posição jogada no vetor todasJogadas, incrementa o número da jogada e por fim realoca as peças do jogador para a direita
 void cheatMode(pont board, pontDeque monte, pontJogadores jog, char peca, char numero, int linha, int coluna, int *n_jogada, int *todasJogadas)
 {  
     int i, aux = 0, pos = -1;
@@ -1237,21 +1313,33 @@ void cheatMode(pont board, pontDeque monte, pontJogadores jog, char peca, char n
     }
 }
 
+//Função que realiza a contagem de pontos, depende do vetor que contém todas as posições que o jogador colocou uma peça
 void contarPontos(pontJogadores jog, int *todasJogadas, int tam, pont board)
 {
+    //Inteiros que se forem iguais a iguais a zero, representam que as peças foram organizadas em linha ou em coluna
     int jogadaHorizontal, jogadaVertical;
+
+    //Armazena-se as coordenadas da última posição jogada
     int ultimaPosicaoH = todasJogadas[tam-2];
     int ultimaPosicaoV = todasJogadas[tam-1];
+
+    //Os inteiros representam, respectivamente, os pontos acumulados na rodada, os pontos acumulados na horizontal e pontos acumulados na vertical
     int auxPontos = 0, auxPontosH = 0, auxPontosV = 0;
+
+    //Caso em que foi realizado pelo menos uma jogada
     if(tam >= 4)
     {
+        //Cálculo para sabe se a jogada foi horizontal ou vertical
         jogadaHorizontal = todasJogadas[tam-2] - todasJogadas[tam-4];
         jogadaVertical = todasJogadas[tam-1] - todasJogadas[tam-3];
-        printf("%d %d\n", jogadaHorizontal, jogadaVertical);
+
+        //Caso em que as peças foram colocadas em linha
         if(jogadaHorizontal == 0)
         {
+            //Cálculo dos pontos acumulados apenas com as peças jogadas, soma-se 1 para contar a última posição
             auxPontosH = contarPosicoesHorizontal(board, ultimaPosicaoH, ultimaPosicaoV) + 1;
-            printf("Pontos na horizontal: %d\n", auxPontosH);
+    
+            //Aqui verfica-se se um qwirkle foi realizado
             if( auxPontosH == 6)
             {
                 auxPontos = auxPontosH*2;
@@ -1260,10 +1348,15 @@ void contarPontos(pontJogadores jog, int *todasJogadas, int tam, pont board)
             {
                 auxPontos = auxPontosH;
             }
+
             int k = 0;
+            //Aqui conta-se os pontos acumulados na vertical de cada posição colocada na horizontal 
             while(k < tam)
             {
+                //Não é somado 1, pois os pontos na vertical são contabilizados se houver pelo menos uma outra peça conectada à coordenada atual
                 auxPontosV = contarPosicoesVertical(board, todasJogadas[k], todasJogadas[k+1]);
+
+                //Caso em que há um qwirkle
                 if(auxPontosV == 5)
                 {
                     auxPontos += (auxPontosV+1)*2;
@@ -1272,14 +1365,19 @@ void contarPontos(pontJogadores jog, int *todasJogadas, int tam, pont board)
                 {
                     auxPontos += auxPontosV+1;
                 }
+
+                //Cada duas posições do vetor de todas as jogadas representa uma coordenada, por causa disso o incremento de 2
                 k+=2;
             }
             jog->pontos += auxPontos;
         }
+        //Caso em que as peças foram posicionadas em coluna
         else if(jogadaVertical == 0)
         {
+            //Conta-se os pontos acumulados na vertical, contando a posição em si
             auxPontosV = contarPosicoesVertical(board, ultimaPosicaoH, ultimaPosicaoV) + 1;
-            printf("Pontos na vertical: %d\n", auxPontosV);
+    
+            //Caso em que há qwirkle nas peças posicionadas
             if( auxPontosV == 6)
             {
                 auxPontos = auxPontosV*2;
@@ -1289,6 +1387,8 @@ void contarPontos(pontJogadores jog, int *todasJogadas, int tam, pont board)
                 auxPontos = auxPontosV;
             }
             int k = 0;
+
+            //Conta-se os pontos na horizontal de cada peça posicionada
             while(k < tam)
             {
                 auxPontosH = contarPosicoesHorizontal(board, todasJogadas[k], todasJogadas[k+1]);
@@ -1305,10 +1405,15 @@ void contarPontos(pontJogadores jog, int *todasJogadas, int tam, pont board)
             jog->pontos += auxPontos;
         }
     }
+    //Caso em que uma peça foi posicionada
     else
     {
+        //Conta os pontos na horizontal e a peça posionada
         auxPontosH = contarPosicoesHorizontal(board, ultimaPosicaoH, ultimaPosicaoV)+1;
+        //Conta os pontos na vertical sem contar a peça, já que ela já foi contabilizada
         auxPontosV = contarPosicoesVertical(board, ultimaPosicaoH, ultimaPosicaoV);
+
+        //Caso em que há qwirkle na horizontal
         if(auxPontosH == 6)
         {
             auxPontos = auxPontosH*2;
@@ -1317,6 +1422,7 @@ void contarPontos(pontJogadores jog, int *todasJogadas, int tam, pont board)
         {
             auxPontos = auxPontosH;
         }
+        //Caso em que há qwirkle na vertical
         if(auxPontosV == 5)
         {
             auxPontos += (auxPontosV+1)*2;
@@ -1329,16 +1435,21 @@ void contarPontos(pontJogadores jog, int *todasJogadas, int tam, pont board)
     }
 }
 
+//Função que retorna a quantidade posições conectadas na linha das coordenadas passadas como parâmetro, não conta a posição nas coordenadas
 int contarPosicoesHorizontal(pont board, int posHInicial, int posVInicial)
 {
     int pontos = 0;
+
     int controlePosicao = posVInicial + 1;
+    //Verifica a quantidade de posições conectadas à direita
     while(board->pieces[posHInicial][controlePosicao].formato != ' ')
     {
         controlePosicao++;
         pontos++;
     }
+
     controlePosicao = posVInicial - 1;
+    //Verifica a quantidade de posições conectadas à esquerda
     while(board->pieces[posHInicial][controlePosicao].formato != ' ')
     {
         controlePosicao--;
@@ -1347,16 +1458,21 @@ int contarPosicoesHorizontal(pont board, int posHInicial, int posVInicial)
     return pontos;
 }
 
+//Função que retorna a quantidade posições conectadas na coluna das coordenadas passadas como parâmetro, não conta a posição nas coordenadas
 int contarPosicoesVertical(pont board, int posHInicial, int posVInicial)
 {
     int pontos = 0;
+
     int controlePosicao = posHInicial + 1;
+    //Verifica a quantidade de posições conectadas abaixo
     while(board->pieces[controlePosicao][posVInicial].formato != ' ')
     {
         controlePosicao++;
         pontos++;
     }
+    
     controlePosicao = posHInicial - 1;
+    //Verifica a quantidade de posições conectadas em cima
     while(board->pieces[controlePosicao][posVInicial].formato != ' ')
     {
         controlePosicao--;

@@ -1,5 +1,6 @@
 #include"deck.h"
 
+//Aqui é declarada a estrutura jogadores que representam cada jogador e contém todas as informações dos mesmos
 typedef struct auxJog
 {
     piece piecesJogador[6];

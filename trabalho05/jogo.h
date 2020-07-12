@@ -1,9 +1,11 @@
+//Definição da estrutura que representa a peça
 typedef struct
 {
     char formato;
     char cor;
 }piece;
 
+//Definição do tabuleiro, com uma "matriz" de peças, número de colunas e de linhas
 typedef struct 
 {
     piece ** pieces;

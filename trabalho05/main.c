@@ -5,27 +5,39 @@
 
 int main()
 {
+    //Inteiro que controla o jogar novamente
     int controleJogar = 1;
+
     while(controleJogar == 1)
     {
+        //Inicia-se o tabuleiro e o monte
         pont board = startBoard();
         pontDeque monte = iniciarDeque();
+
         int qtdJogs;
         char aux[2];
+
+        //Leitura da quantidade de jogadores
         printf("Digite o numero de jogadores: ");
         fgetss(aux, 1, "Numero de jogadores");
         qtdJogs = atoi(aux);
         /*
+        //Controle para manter o número recomendado de jogadores
         while(qtdJogs < 2 && qtdJogs > 4)
         {
             printf("Digite novamente o numero de jogadores, quantidade minima de 2 e maxima de 4 jogadores: ");
             scanf("%d", &qtdJogs);
         }
         */
+
+        //Aqui são iniciados os jogadores
         pontJogadores inicio =  iniciarJogs(monte, qtdJogs);
+
         pontJogadores jogAtual;
         jogAtual = inicio;
         int i = 1;
+
+        //Percorre-se todos os jogadores para armazenar os nomes de cada um deles
         while(jogAtual != NULL)
         {
             char nome[21];
@@ -35,6 +47,7 @@ int main()
             jogAtual = jogAtual->proxJog;
             i++;
         }
+
         //Verificando se o usuário quer jogar em cheat mode
         printf("Cheat mode (S/N): ");
         char cheat;
@@ -51,25 +64,35 @@ int main()
         }
         getchar();
         
+        //Estrutura de repetição enquanto houver cartas no monte
         while(monte->qtdCartas != 0)
         {
+            //Aqui percorre-se cada um dos jogadores
             jogAtual = inicio;
             while(jogAtual != NULL)
             {
+                //Leitura de comandos
                 leituraComandos(board, monte, jogAtual, cheat);
                 jogAtual = jogAtual->proxJog;
             }
         }
-        
-        
-        //Apenas para teste
-     /*   jogAtual = inicio;
-        leituraComandos(board, monte, jogAtual, cheat);
-        leituraComandos(board, monte, jogAtual->proxJog, cheat);
+
+        //Função para selecionar o vencedor
         selecionarVencedor(inicio);
-        controleJogar = 2;*/
+        
+        //Verificas se o usuário deseja jogar novamente
         char jogarNov[2];
-        printf("Deseja jogar novamente?");
+        printf("Deseja jogar novamente (S/N): ");
         fgetss(jogarNov, 1, "Comando para jogar novamente");
+        toUpper(jogarNov);
+        if(jogarNov[0] == 'S')
+        {
+            controleJogar = 1;
+        }
+        else
+        {
+            controleJogar = 0; 
+        }
+        
     }
 }
