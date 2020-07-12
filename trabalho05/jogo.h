@@ -15,7 +15,7 @@ typedef board * pont;
 
 pont startBoard();
 
-void reallocBoard(pont board, int linha, int coluna);
+void reallocBoard(pont board, int linha, int coluna, int tam, int *todasJogadas);
 
 void resetBoard(pont board);
 

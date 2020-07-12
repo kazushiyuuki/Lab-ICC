@@ -14,7 +14,7 @@ pont startBoard()
     return board;
 }
 
-void reallocBoard(pont board, int linha, int coluna)
+void reallocBoard(pont board, int linha, int coluna, int tam, int *todasJogadas)
 {
     //Função para realocar memória do tabuleiro para mostrar dinamicamente o mesmo
     int i, j;
@@ -36,7 +36,12 @@ void reallocBoard(pont board, int linha, int coluna)
             board->pieces[i][j].cor = ' ';
             board->pieces[i][j].formato = ' ';
         }
-
+        int k = 0;
+        while(k < tam)
+        {
+            todasJogadas[k]++;
+            k+=2;
+        }
     }
     if(linha == linhasIniciais - 1)
     {
@@ -63,6 +68,12 @@ void reallocBoard(pont board, int linha, int coluna)
             }
             board->pieces[i][j].cor = ' ';
             board->pieces[i][j].formato = ' ';
+        }
+        int w = 1;
+        while(w < tam)
+        {
+            todasJogadas[w]++;
+            w+=2;
         }
     }
     if(coluna == colunasIniciais-1)

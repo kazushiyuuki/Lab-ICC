@@ -38,3 +38,9 @@ void selecionarVencedor(pontJogadores inicio);
 void reporPiecesJog(pontJogadores jog, pontDeque monte);
 
 void cheatMode(pont board, pontDeque monte,pontJogadores jog, char peca, char numero, int linha, int coluna, int *n_jogada, int *todasJogadas);
+
+void contarPontos(pontJogadores jog, int *todasJogadas, int tam, pont board);
+
+int contarPosicoesHorizontal(pont board, int posHInicial, int posVInicial);
+
+int contarPosicoesVertical(pont board, int posHInicial, int posVInicial);

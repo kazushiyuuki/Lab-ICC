@@ -72,8 +72,7 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
     if(aux == 0 && verifica == 1){
         board->pieces[linha][coluna].formato = peca; 
         board->pieces[linha][coluna].cor = numero;
-        reallocBoard(board, linha, coluna);
-            
+        reallocBoard(board, linha, coluna, (*n_jogada*2), todasJogadas);
         //Retirando a peça jogada das peças do jogador
         int k = 0;
         for(i = 0; i < jog->qtdPieces; i++){
@@ -749,13 +748,9 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna, i
             //Copiando vetor de jogadas e aumentando seu tamanho
             int auxJogadas[tam_aux];
             for(i = 0; i < tam_aux; i++){
-                if(todasJogadas[i] == 0){
-                    auxJogadas[i] = 1;
-                }
-                else{
-                    auxJogadas[i] = todasJogadas[i];
-                }
+                 auxJogadas[i] = todasJogadas[i];
             }
+            free(todasJogadas);
             todasJogadas = (int *)realloc(todasJogadas, tam * sizeof(int));
             for(i = 0; i < tam_aux; i++){
                 todasJogadas[i] = auxJogadas[i];
@@ -774,6 +769,7 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna, i
                 }
             }
         }
+        printf("%d %d", linha, coluna);
         //Acresecentando a nova jogada ao vetor
         todasJogadas[tam - 2] = linha;
         todasJogadas[tam - 1] = coluna;
@@ -794,6 +790,8 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
     int aux = 0, num_jogada = 1, *n_jogada;
     n_jogada = &num_jogada;     //Ponteiro que aponta para a variável que armazena o número da jogada atual do jogador
     int *todasJogadas = (int *)malloc(2 * sizeof(int)); //Vetor que armazena as posições das jogadas do jogador
+
+    int pontosAtual = jog->pontos;
 
     while(aux != -1)
     {   
@@ -958,6 +956,7 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
             else if(!strcmp(funcao, passar))
             {
                 printf("Funcao passar acionada\n");
+                contarPontos(jog, todasJogadas, (num_jogada-1)*2, board);
                 if(jog->qtdPieces < 6){
                     reporPiecesJog(jog, monte);
                 }
@@ -969,6 +968,9 @@ void leituraComandos(pont board, pontDeque monte, pontJogadores jog, char cheat)
             }
         }
     }
+    printf("*********************************************\n");
+    printf("***** Pontuacao %s: %d / Pontuacao acumulada: %d\n", jog->nome, jog->pontos, (jog->pontos-pontosAtual));
+    printf("*********************************************\n");
     free(todasJogadas);
 }
 
@@ -1185,34 +1187,46 @@ void cheatMode(pont board, pontDeque monte, pontJogadores jog, char peca, char n
         //Se a peça não estiver entre as peças do jogador, procura no monte
         if(aux == 1){
             pontCarta carta = monte->inicio;
+            pontCarta anterior = NULL;
             pontCarta apagar;
             while(carta != NULL && monte->qtdCartas != 0)
             {   
-                apagar = carta;
                 if(carta->info.formato == peca && carta->info.cor == numero)
                 {
+                    if(anterior == NULL)
+                    {
+                        monte->inicio = carta->prox;
+                    }
+                    else
+                    {
+                        anterior->prox = carta->prox;
+                    }
                     aux = 0;
+                    apagar = carta;
                     free(apagar);
+                    carta = NULL;
                     monte->qtdCartas--;
+                    printf("-------------------Peca retirado do monte------------\n");
                     break;
                 }
                 else
                 {
                     aux = 1;
-                }
-                if(carta->prox != NULL)
-                {
+                    anterior = carta;
                     carta = carta->prox;
                 }
             }
+            if(aux == 1)
+            {   
+                printf("Peca nao disponivel no monte de pecas\n");
+            }
         }
     }    
-    
     int verifica = verificarJogada(board, peca, numero, linha, coluna, n_jogada, todasJogadas);
     if(aux == 0 && verifica == 1){
         board->pieces[linha][coluna].formato = peca; 
         board->pieces[linha][coluna].cor = numero;
-        reallocBoard(board, linha, coluna);
+        reallocBoard(board, linha, coluna, (*n_jogada*2), todasJogadas);
         //Caso a peça tenha sido encontrada no deck do jogador
         if(pos != -1){
             //Retirando a peça jogada das peças do jogador
@@ -1235,3 +1249,103 @@ void cheatMode(pont board, pontDeque monte, pontJogadores jog, char peca, char n
     }
 }
 
+void contarPontos(pontJogadores jog, int *todasJogadas, int tam, pont board)
+{
+    int jogadaHorizontal, jogadaVertical;
+    int ultimaPosicaoH = todasJogadas[tam-2];
+    int ultimaPosicaoV = todasJogadas[tam-1];
+    int auxPontos = 0;
+    printf("Verificando pecas %d %d\n", ultimaPosicaoH, ultimaPosicaoV);
+    if(tam >= 4)
+    {
+        jogadaHorizontal = todasJogadas[tam-2] - todasJogadas[tam-4];
+        jogadaVertical = todasJogadas[tam-1] - todasJogadas[tam-3];
+        if(jogadaHorizontal == 0)
+        {
+            auxPontos += contarPosicoesHorizontal(board, ultimaPosicaoH, ultimaPosicaoV);
+            int k = 0;
+            while(k < tam)
+            {
+                auxPontos += contarPosicoesVertical(board, todasJogadas[k], todasJogadas[k+1]);
+                k+=2;
+            }
+            jog->pontos = auxPontos;
+        }
+        else if(jogadaVertical == 0)
+        {
+            auxPontos += contarPosicoesVertical(board, ultimaPosicaoH, ultimaPosicaoV);
+            int w = 0;
+            while(w < tam)
+            {
+                auxPontos += contarPosicoesHorizontal(board, todasJogadas[w], todasJogadas[w+1]);
+                w+=2;
+            }
+            jog->pontos = auxPontos;
+        }
+    }
+    else
+    {
+        auxPontos = contarPosicoesVertical(board, ultimaPosicaoH, ultimaPosicaoV) + contarPosicoesHorizontal(board, ultimaPosicaoH, ultimaPosicaoV);
+        if(auxPontos == 0)
+        {
+            jog->pontos++;
+        }
+        else
+        {
+            jog->pontos = auxPontos;
+        }
+        
+    }
+}
+
+int contarPosicoesHorizontal(pont board, int posHInicial, int posVInicial)
+{
+    int pontos = 1;
+    int controlePosicao = posVInicial + 1;
+    while(board->pieces[posHInicial][controlePosicao].formato != ' ')
+    {
+        controlePosicao++;
+        pontos++;
+    }
+    controlePosicao = posVInicial - 1;
+    while(board->pieces[posHInicial][controlePosicao].formato != ' ')
+    {
+        controlePosicao--;
+        pontos++;
+    }
+    if(pontos == 6)
+    {
+        return 12;
+    }
+    else if(pontos > 1)
+    {
+        return pontos;
+    }
+    return 0;
+}
+
+int contarPosicoesVertical(pont board, int posHInicial, int posVInicial)
+{
+    int pontos = 1;
+    int controlePosicao = posHInicial + 1;
+    while(board->pieces[controlePosicao][posVInicial].formato != ' ')
+    {
+        controlePosicao++;
+        pontos++;
+    }
+    controlePosicao = posHInicial - 1;
+    while(board->pieces[controlePosicao][posVInicial].formato != ' ')
+    {
+        controlePosicao--;
+        pontos++;
+    }
+    if(pontos == 6)
+    {
+        return 12;
+    }
+    else if(pontos > 1)
+    {
+        return pontos;
+    }
+    return 0;
+}

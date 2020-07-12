@@ -64,9 +64,7 @@ int main()
         //Apenas para teste
         jogAtual = inicio;
         leituraComandos(board, monte, jogAtual, cheat);
-        jogAtual->pontos = 12;
         leituraComandos(board, monte, jogAtual->proxJog, cheat);
-        jogAtual->proxJog->pontos = 12;
         selecionarVencedor(inicio);
         controleJogar = 2;
     }
