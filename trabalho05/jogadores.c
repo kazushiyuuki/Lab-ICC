@@ -98,7 +98,7 @@ void joga(pont board, pontDeque monte, pontJogadores jog, char peca, char numero
 // e limita a jogada à mesma linha ou coluna a partir da segunda jogada 
 int verificarJogada(pont board, char peca, char numero, int linha, int coluna, int *n_jogada, int *todasJogadas){
     int verifica = 1;   //Variável a ser retornada
-    int posAdj = -1;    //Vetor que indica qual a posição das peças adjacentes em relação à peça jogada (0 = acima, 1 = esquerda, 2 = direita, 3 = abaixo)
+    int posAdj = -1;    //Variável que indica qual a posição das peças adjacentes em relação à peça jogada (0 = acima, 1 = esquerda, 2 = direita, 3 = abaixo)
     int pecaIgual = -1;     //Variável que indica se o formato ou a cor são iguais à peça adjacente (1 = formato, 2 = cor)
     
     if(board->columns != 1 && board->rows != 1){
@@ -630,7 +630,7 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna, i
             }
         }
     }
-    
+    //Verifica se a linha ou coluna já é de uma cor ou formato
     int aux_linha, aux_coluna;
     if(verifica == 1){
         if(posAdj == 0){
@@ -745,14 +745,6 @@ int verificarJogada(pont board, char peca, char numero, int linha, int coluna, i
     if(verifica == 1){
         int tam = (*n_jogada) * 2, tam_aux = ((*n_jogada) - 1) * 2, i;
         if((*n_jogada) > 1){
-            //Copiando vetor de jogadas e aumentando seu tamanho
-            int auxJogadas[tam_aux];
-            for(i = 0; i < tam_aux; i++){
-                 auxJogadas[i] = todasJogadas[i];
-            }
-            for(i = 0; i < tam_aux; i++){
-                todasJogadas[i] = auxJogadas[i];
-            }
             //Limitando a nova jogada à mesma linha ou coluna das jogadas anteriores
             if((*n_jogada) > 2){
                 if(todasJogadas[0] == todasJogadas[2]){
